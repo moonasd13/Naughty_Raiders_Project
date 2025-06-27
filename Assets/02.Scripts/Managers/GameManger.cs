@@ -26,7 +26,7 @@ void Update()
     /// </summary>
     private void InitPlayer()
     {
-        GameObject prefab = Resources.Load<GameObject>("Prefabs/Player/PlayerEx");
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/Player/Player01");
         if (prefab != null)
         {
             Instantiate(prefab, _Room01_StartPos.position, _Room01_StartPos.rotation);

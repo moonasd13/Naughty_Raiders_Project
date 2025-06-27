@@ -7,8 +7,7 @@ public class RoomItem : MonoBehaviour
     public BoxCollider RoomArea;
     public Transform ScoreObj;
     [SerializeField]
-    public Vector3 basePosition = new Vector3(0, 0, 0); 
-    public Vector3 offset = new Vector3(1.5f, 0, 0);     
+    public Vector3 offset = new Vector3(1.5f, 0, 0);
 
     private bool _isPlayerInZone = false;
     private Transform _playerHand;
@@ -60,6 +59,8 @@ public class RoomItem : MonoBehaviour
 
     void SpawnNextObject(GameObject obj)
     {
+        Vector3 basePosition = ScoreObj.position;
+
         int currentCount = ScoreObj.childCount;
         Vector3 spawnPosition = basePosition + offset * currentCount;
         obj.transform.position = spawnPosition;
