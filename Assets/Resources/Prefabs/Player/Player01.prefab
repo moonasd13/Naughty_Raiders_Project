@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1974774219
+  GlobalObjectIdHash: 1909980482
   InScenePlacedSourceGlobalObjectIdHash: 1909980482
   DeferredDespawnTick: 0
   Ownership: 1
@@ -184,9 +184,9 @@ MonoBehaviour:
   SyncPositionX: 1
   SyncPositionY: 1
   SyncPositionZ: 1
-  SyncRotAngleX: 0
+  SyncRotAngleX: 1
   SyncRotAngleY: 0
-  SyncRotAngleZ: 0
+  SyncRotAngleZ: 1
   SyncScaleX: 0
   SyncScaleY: 0
   SyncScaleZ: 0
@@ -1500,6 +1500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc2e0ab103850c4bac88e037bccc054, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   MoveSpeed: 2
   SprintSpeed: 5.335
   RotationSmoothTime: 0.12

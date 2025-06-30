@@ -39,15 +39,15 @@ void Update()
     /// </summary>
     private void InitPlayer()
     {
-        GameObject prefab = Resources.Load<GameObject>("Prefabs/Player/Player01");
-        if (prefab != null)
-        {
-            Instantiate(prefab, Room_StartPoses[0].position, Room_StartPoses[0].rotation);
-        }
-        else
-        {
-            Debug.LogError("프리팹을 찾을 수 없습니다.");
-        }
+        //GameObject prefab = Resources.Load<GameObject>("Prefabs/Player/Player01");
+        //if (prefab != null)
+        //{
+        //    Instantiate(prefab, Room_StartPoses[0].position, Room_StartPoses[0].rotation);
+        //}
+        //else
+        //{
+        //    Debug.LogError("프리팹을 찾을 수 없습니다.");
+        //}
 
     }
 

@@ -143,7 +143,7 @@ namespace StarterAssets
 
             foreach (GameObject cam in cameras)
             {
-                if (IsOwner && cam.transform.IsChildOf(transform))
+                if (IsOwner)
                 {
                     cam.SetActive(true);
                 }
