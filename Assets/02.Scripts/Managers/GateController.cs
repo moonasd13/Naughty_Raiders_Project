@@ -9,11 +9,6 @@ public class GateController : MonoBehaviour
     public float targetHeight = 5.0f;
     public float moveSpeed = 2.0f;
 
-    private void Start()
-    {
-        OpenGate();
-    }
-
     public void OpenGate()
     {
         foreach (Transform child in GateWalls.transform)

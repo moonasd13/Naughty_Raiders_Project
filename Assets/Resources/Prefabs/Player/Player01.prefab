@@ -141,14 +141,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1909980482
-  InScenePlacedSourceGlobalObjectIdHash: 0
+  GlobalObjectIdHash: 1974774219
+  InScenePlacedSourceGlobalObjectIdHash: 1909980482
   DeferredDespawnTick: 0
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
+  SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
@@ -1256,7 +1256,7 @@ GameObject:
   - component: {fileID: 4796396344421533612}
   m_Layer: 7
   m_Name: PlayerFollowCamera
-  m_TagString: Untagged
+  m_TagString: PlayerCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

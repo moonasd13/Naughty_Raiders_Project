@@ -12,8 +12,7 @@ public class ItemSpawner : MonoBehaviour
     public LayerMask obstacleMask;
     public NavMeshSurface navSurface;
 
-
-    void Start()
+    public void SpawnerOn()
     {
         NavMeshTriangulation tri = NavMesh.CalculateTriangulation();
         List<Vector3> spawnPoints = new List<Vector3>();
@@ -47,6 +46,5 @@ public class ItemSpawner : MonoBehaviour
         {
             Instantiate(prefab, spawnPoints[i], Quaternion.identity);
         }
-
     }
 }

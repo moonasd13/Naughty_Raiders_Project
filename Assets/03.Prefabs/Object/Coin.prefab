@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5682073894973085078
+--- !u!1 &4195559057181165408
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,41 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5313833985756238412}
-  m_Layer: 0
-  m_Name: Coin
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5313833985756238412
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5682073894973085078}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.770049, y: 4.7581234, z: 1.295342}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 3599265094218530938}
-  - {fileID: 67665895449988685}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8149242517382195052
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 67665895449988685}
-  - component: {fileID: 7666486344610658121}
+  - component: {fileID: 5326249322013504952}
+  - component: {fileID: 1260202769454840117}
   m_Layer: 0
   m_Name: SenseZone
   m_TagString: Untagged
@@ -50,28 +17,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &67665895449988685
+--- !u!4 &5326249322013504952
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8149242517382195052}
+  m_GameObject: {fileID: 4195559057181165408}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5313833985756238412}
+  m_Father: {fileID: 3189105313671108260}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &7666486344610658121
+--- !u!135 &1260202769454840117
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8149242517382195052}
+  m_GameObject: {fileID: 4195559057181165408}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -86,13 +53,46 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0.25, z: 0}
---- !u!1001 &3925329035707983761
+--- !u!1 &6903671188860600466
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3189105313671108260}
+  m_Layer: 0
+  m_Name: Coin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3189105313671108260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6903671188860600466}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7579843359946498028}
+  - {fileID: 5326249322013504952}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &7979175799406966791
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 5313833985756238412}
+    m_TransformParent: {fileID: 3189105313671108260}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 1e609b81486ee3f4586681228e93dbb7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -144,28 +144,23 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e609b81486ee3f4586681228e93dbb7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6985079843642699023}
+      addedObject: {fileID: 4189132729802390752}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e609b81486ee3f4586681228e93dbb7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2088310590515132952}
+      addedObject: {fileID: 1523103059040214160}
   m_SourcePrefab: {fileID: 100100000, guid: 1e609b81486ee3f4586681228e93dbb7, type: 3}
---- !u!4 &3599265094218530938 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1e609b81486ee3f4586681228e93dbb7, type: 3}
-  m_PrefabInstance: {fileID: 3925329035707983761}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &4231404683617082048 stripped
+--- !u!1 &7096217039492515158 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e609b81486ee3f4586681228e93dbb7, type: 3}
-  m_PrefabInstance: {fileID: 3925329035707983761}
+  m_PrefabInstance: {fileID: 7979175799406966791}
   m_PrefabAsset: {fileID: 0}
---- !u!135 &6985079843642699023
+--- !u!135 &4189132729802390752
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4231404683617082048}
+  m_GameObject: {fileID: 7096217039492515158}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -180,16 +175,21 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.25
   m_Center: {x: 0, y: 0.21650636, z: 0}
---- !u!114 &2088310590515132952
+--- !u!114 &1523103059040214160
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4231404683617082048}
+  m_GameObject: {fileID: 7096217039492515158}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d86c4f65bf774124ebd84712626df0f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _senseZone: {fileID: 7666486344610658121}
+  _senseZone: {fileID: 1260202769454840117}
+--- !u!4 &7579843359946498028 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1e609b81486ee3f4586681228e93dbb7, type: 3}
+  m_PrefabInstance: {fileID: 7979175799406966791}
+  m_PrefabAsset: {fileID: 0}

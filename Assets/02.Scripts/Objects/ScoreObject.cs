@@ -1,10 +1,10 @@
 using StarterAssets;
 using UnityEngine;
 
-public class ItemBox : MonoBehaviour
+public class ScoreObject : MonoBehaviour
 {
     [SerializeField]
-    public BoxCollider _senseZone;
+    public Collider _senseZone;
 
     private bool _isPlayerInZone = false;
     private Transform _playerHand;
