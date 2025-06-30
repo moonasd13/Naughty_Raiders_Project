@@ -1,16 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Globalization;
+using UnityEngine;
+using Unity.Netcode;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
 
 namespace StarterAssets
 {
-	[RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(CharacterController))]
 #if ENABLE_INPUT_SYSTEM
-	[RequireComponent(typeof(PlayerInput))]
+    [RequireComponent(typeof(PlayerInput))]
 #endif
-	public class PlayerController : MonoBehaviour
-	{
+    public class PlayerController : NetworkBehaviour
+    {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
@@ -137,6 +139,19 @@ namespace StarterAssets
 
         private void Start()
         {
+            GameObject[] cameras = GameObject.FindGameObjectsWithTag("PlayerCamera");
+
+            foreach (GameObject cam in cameras)
+            {
+                if (IsOwner && cam.transform.IsChildOf(transform))
+                {
+                    cam.SetActive(true);
+                }
+                else
+                {
+                    cam.SetActive(false);
+                }
+            }
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
 
             _hasAnimator = TryGetComponent(out _animator);
