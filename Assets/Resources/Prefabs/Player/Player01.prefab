@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &288644299304821747
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 703043862305436813}
+  m_Layer: 7
+  m_Name: HandPos_L
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &703043862305436813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288644299304821747}
+  serializedVersion: 2
+  m_LocalRotation: {x: -2.3283062e-10, y: 0.03395562, z: -0.99939346, w: -0.0077263284}
+  m_LocalPosition: {x: -0.041, y: 0.114, z: -0.027}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1629198101673364246}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &337662612136151107
 GameObject:
   m_ObjectHideFlags: 0
@@ -141,7 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1974774219
+  GlobalObjectIdHash: 1909980482
   InScenePlacedSourceGlobalObjectIdHash: 1909980482
   DeferredDespawnTick: 0
   Ownership: 1
@@ -805,7 +836,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1324218878359304181}
   m_Layer: 7
-  m_Name: HandPos
+  m_Name: HandPos_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -819,13 +850,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2876560388588375774}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.15, z: 0}
+  m_LocalRotation: {x: 0.70005995, y: 0.6732007, z: 0.135325, w: 0.19596948}
+  m_LocalPosition: {x: 0.087, y: 0.214, z: -0.01}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2091308378924200947}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 5.289, y: 152.918, z: 90.966}
 --- !u!1 &2985160613814347111
 GameObject:
   m_ObjectHideFlags: 0
@@ -1500,6 +1531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcc2e0ab103850c4bac88e037bccc054, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   MoveSpeed: 2
   SprintSpeed: 5.335
   RotationSmoothTime: 0.12
@@ -1533,7 +1565,9 @@ MonoBehaviour:
   BottomClamp: -10
   CameraAngleOverride: 0
   LockCameraPosition: 0
-  handTransform: {fileID: 1324218878359304181}
+  righthandTransform: {fileID: 1324218878359304181}
+  lefthandTransform: {fileID: 703043862305436813}
+  equip: 0
   inHand: 0
 --- !u!114 &3528782085809054421
 MonoBehaviour:
@@ -1993,6 +2027,7 @@ Transform:
   - {fileID: 2466128033881658769}
   - {fileID: 3939619366421778696}
   - {fileID: 7994272493598416824}
+  - {fileID: 703043862305436813}
   m_Father: {fileID: 2009371531257694708}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5587378164693955241

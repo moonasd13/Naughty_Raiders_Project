@@ -20,12 +20,7 @@ public class GameManger : MonoBehaviour
 
     void Start()
     {
-        Room01_Score = 0;
-        Room02_Score = 0;
-        Room03_Score = 0;
-        Room04_Score = 0;
-        InitPlayer();
-        itemSpawner.SpawnerOn();
+        GameSatart();
     }
 
 void Update()
@@ -33,16 +28,22 @@ void Update()
         
     }
 
-
     /// <summary>
     /// 플레이어 생성
     /// </summary>
     private void InitPlayer()
     {
-        GameObject prefab = Resources.Load<GameObject>("Prefabs/Player/Player01");
-        if (prefab != null)
+        GameObject prefab01 = Resources.Load<GameObject>("Prefabs/Player/Player01");
+        GameObject prefab02 = Resources.Load<GameObject>("Prefabs/Player/Player02");
+        GameObject prefab03 = Resources.Load<GameObject>("Prefabs/Player/Player03");
+        GameObject prefab04 = Resources.Load<GameObject>("Prefabs/Player/Player04");
+
+        if (prefab01 != null)
         {
-            Instantiate(prefab, Room_StartPoses[0].position, Room_StartPoses[0].rotation);
+            Instantiate(prefab01, Room_StartPoses[0].position, Room_StartPoses[0].rotation);
+            //Instantiate(prefab02, Room_StartPoses[1].position, Room_StartPoses[1].rotation);
+            //Instantiate(prefab03, Room_StartPoses[2].position, Room_StartPoses[2].rotation);
+            //Instantiate(prefab04, Room_StartPoses[3].position, Room_StartPoses[3].rotation);
         }
         else
         {
@@ -82,6 +83,20 @@ void Update()
             Debug.LogFormat($"{Room01_Score}, {Room02_Score}, {Room03_Score}, {Room04_Score}");
         }
     }
+
+    /// <summary>
+    /// 게임 시작시 세팅
+    /// </summary>
+    private void GameSatart()
+    {
+        Room01_Score = 0;
+        Room02_Score = 0;
+        Room03_Score = 0;
+        Room04_Score = 0;
+        InitPlayer();
+        itemSpawner.SpawnerOn();
+    }
+
 
     void OnGUI()
     {

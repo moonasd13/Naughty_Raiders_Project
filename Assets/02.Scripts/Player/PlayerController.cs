@@ -78,8 +78,13 @@ namespace StarterAssets
         public bool LockCameraPosition = false;
 
         [Header("pos")]
-        public Transform handTransform;
+        public Transform righthandTransform;
+        public Transform lefthandTransform;
+        public bool equip = false;
         public bool inHand = false;
+
+        private bool in_action = false;
+        private ItemObject Item;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -139,19 +144,19 @@ namespace StarterAssets
 
         private void Start()
         {
-            GameObject[] cameras = GameObject.FindGameObjectsWithTag("PlayerCamera");
+            //GameObject[] cameras = GameObject.FindGameObjectsWithTag("PlayerCamera");
 
-            foreach (GameObject cam in cameras)
-            {
-                if (IsOwner && cam.transform.IsChildOf(transform))
-                {
-                    cam.SetActive(true);
-                }
-                else
-                {
-                    cam.SetActive(false);
-                }
-            }
+            //foreach (GameObject cam in cameras)
+            //{
+            //    if (IsOwner)
+            //    {
+            //        cam.SetActive(true);
+            //    }
+            //    else
+            //    {
+            //        cam.SetActive(false);
+            //    }
+            //}
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
 
             _hasAnimator = TryGetComponent(out _animator);
@@ -174,9 +179,12 @@ namespace StarterAssets
         {
             _hasAnimator = TryGetComponent(out _animator);
 
-            JumpAndGravity();
-            GroundedCheck();
-            Move();
+            if(in_action == false)
+            {
+                JumpAndGravity();
+                GroundedCheck();
+                Move();
+            }
         }
 
         private void LateUpdate()
@@ -208,6 +216,9 @@ namespace StarterAssets
             }
         }
 
+        /// <summary>
+        /// 카메라 회전
+        /// </summary>
         private void CameraRotation()
         {
             // if there is an input
@@ -231,6 +242,9 @@ namespace StarterAssets
             }
         }
 
+        /// <summary>
+        /// 움직임
+        /// </summary>
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
@@ -291,6 +305,9 @@ namespace StarterAssets
             }
         }
 
+        /// <summary>
+        /// 점프
+        /// </summary>
         private void JumpAndGravity()
         {
             if (Grounded)
@@ -360,6 +377,13 @@ namespace StarterAssets
             }
         }
 
+        /// <summary>
+        /// 카메라 각도
+        /// </summary>
+        /// <param name="lfAngle"></param>
+        /// <param name="lfMin"></param>
+        /// <param name="lfMax"></param>
+        /// <returns></returns>
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
             if (lfAngle < -360f) lfAngle += 360f;
@@ -381,6 +405,37 @@ namespace StarterAssets
                 GroundedRadius);
         }
 
+        /// <summary>
+        /// 테이져건 발사
+        /// </summary>
+        public void ShootiongaAnimation()
+        {
+            if(equip == true)
+            {
+                Item = righthandTransform.GetChild(0).gameObject.GetComponent<ItemObject>();
+                in_action = true;
+                _animator.SetBool("Shooting", true);
+            }
+        }
+
+        #region[애니메이션 이벤트]
+        // 탄환 발사
+        private void Shoot()
+        {
+            Item.Shoot();
+        }
+
+
+        // 테이져건 종료
+        private void ShootingOff()
+        {
+            in_action = false;
+            equip = false;
+            _animator.SetBool("Shooting", false);
+            Destroy(righthandTransform.GetChild(0).gameObject);
+        }
+
+        //발소리
         private void OnFootstep(AnimationEvent animationEvent)
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
@@ -393,6 +448,7 @@ namespace StarterAssets
             }
         }
 
+        //지면착지
         private void OnLand(AnimationEvent animationEvent)
         {
             if (animationEvent.animatorClipInfo.weight > 0.5f)
@@ -400,5 +456,6 @@ namespace StarterAssets
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
         }
+        #endregion
     }
 }

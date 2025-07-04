@@ -6,7 +6,8 @@ using UnityEngine.AI;
 
 public class ItemSpawner : MonoBehaviour
 {
-    public GameObject prefab;
+    public GameObject coin;
+    public GameObject[] Items;
     public int itemCount = 20;
     public float spawnRadius = 0.5f;
     public LayerMask obstacleMask;
@@ -34,6 +35,7 @@ public class ItemSpawner : MonoBehaviour
             }
         }
 
+        // 셔플
         for (int i = 0; i < spawnPoints.Count; i++)
         {
             int randIndex = Random.Range(i, spawnPoints.Count);
@@ -42,9 +44,27 @@ public class ItemSpawner : MonoBehaviour
             spawnPoints[randIndex] = temp;
         }
 
-        for (int i = 0; i < Mathf.Min(itemCount, spawnPoints.Count); i++)
+        // 스폰 수 계산
+        int totalSpawn = Mathf.Min(itemCount, spawnPoints.Count);
+        int coinCount = /*Mathf.CeilToInt(totalSpawn * 2f / 3f);*/ 0;
+        int otherCount = totalSpawn - coinCount;
+
+        int spawnIndex = 0;
+
+        // 1. 코인 먼저 스폰
+        for (int i = 0; i < coinCount; i++)
         {
-            Instantiate(prefab, spawnPoints[i], Quaternion.identity);
+            Instantiate(coin, spawnPoints[spawnIndex], Quaternion.identity);
+            spawnIndex++;
+        }
+
+        // 2. 나머지 아이템 랜덤 스폰
+        for (int i = 0; i < otherCount; i++)
+        {
+            GameObject randomItem = Items[Random.Range(0, Items.Length)];
+            Instantiate(randomItem, spawnPoints[spawnIndex], Quaternion.identity);
+            spawnIndex++;
         }
     }
+
 }
