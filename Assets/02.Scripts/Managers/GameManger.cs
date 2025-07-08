@@ -33,22 +33,22 @@ void Update()
     /// </summary>
     private void InitPlayer()
     {
-        GameObject prefab01 = Resources.Load<GameObject>("Prefabs/Player/Player01");
-        GameObject prefab02 = Resources.Load<GameObject>("Prefabs/Player/Player02");
-        GameObject prefab03 = Resources.Load<GameObject>("Prefabs/Player/Player03");
-        GameObject prefab04 = Resources.Load<GameObject>("Prefabs/Player/Player04");
+        //GameObject prefab01 = Resources.Load<GameObject>("Prefabs/Player/Player01");
+        //GameObject prefab02 = Resources.Load<GameObject>("Prefabs/Player/Player02");
+        //GameObject prefab03 = Resources.Load<GameObject>("Prefabs/Player/Player03");
+        //GameObject prefab04 = Resources.Load<GameObject>("Prefabs/Player/Player04");
 
-        if (prefab01 != null)
-        {
-            Instantiate(prefab01, Room_StartPoses[0].position, Room_StartPoses[0].rotation);
-            //Instantiate(prefab02, Room_StartPoses[1].position, Room_StartPoses[1].rotation);
-            //Instantiate(prefab03, Room_StartPoses[2].position, Room_StartPoses[2].rotation);
-            //Instantiate(prefab04, Room_StartPoses[3].position, Room_StartPoses[3].rotation);
-        }
-        else
-        {
-            Debug.LogError("프리팹을 찾을 수 없습니다.");
-        }
+        //if (prefab01 != null)
+        //{
+        //    Instantiate(prefab01, Room_StartPoses[0].position, Room_StartPoses[0].rotation);
+        //    //Instantiate(prefab02, Room_StartPoses[1].position, Room_StartPoses[1].rotation);
+        //    //Instantiate(prefab03, Room_StartPoses[2].position, Room_StartPoses[2].rotation);
+        //    //Instantiate(prefab04, Room_StartPoses[3].position, Room_StartPoses[3].rotation);
+        //}
+        //else
+        //{
+        //    Debug.LogError("프리팹을 찾을 수 없습니다.");
+        //}
 
     }
 

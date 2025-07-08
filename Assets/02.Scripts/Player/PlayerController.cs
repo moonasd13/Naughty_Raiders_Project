@@ -145,7 +145,7 @@ namespace StarterAssets
 
         private void Start()
         {
-            if(!cinemachine_CM)
+            if(cinemachine_CM != null)
             {
                 if(!IsOwner)
                 {
