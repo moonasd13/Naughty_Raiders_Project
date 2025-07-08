@@ -1569,6 +1569,7 @@ MonoBehaviour:
   lefthandTransform: {fileID: 703043862305436813}
   equip: 0
   inHand: 0
+  cinemachine_CM: {fileID: 4180283259390046567}
 --- !u!114 &3528782085809054421
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -87,6 +87,7 @@ namespace StarterAssets
         private ItemObject Item;
 
         // cinemachine
+        [SerializeField] public GameObject cinemachine_CM;
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
 
@@ -144,17 +145,11 @@ namespace StarterAssets
 
         private void Start()
         {
-            GameObject[] cameras = GameObject.FindGameObjectsWithTag("PlayerCamera");
-
-            foreach (GameObject cam in cameras)
+            if(!cinemachine_CM)
             {
-                if (IsOwner)
+                if(!IsOwner)
                 {
-                    cam.SetActive(true);
-                }
-                else
-                {
-                    cam.SetActive(false);
+                    cinemachine_CM.SetActive(false);
                 }
             }
 

@@ -297,6 +297,7 @@ MonoBehaviour:
   lefthandTransform: {fileID: 6042504733590229519}
   equip: 0
   inHand: 0
+  cinemachine_CM: {fileID: 6424450867358685289}
 --- !u!114 &3250087014855556194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1889,7 +1890,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2443454991
+  GlobalObjectIdHash: 638249205
   InScenePlacedSourceGlobalObjectIdHash: 362479048
   DeferredDespawnTick: 0
   Ownership: 1

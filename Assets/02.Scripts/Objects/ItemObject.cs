@@ -8,12 +8,20 @@ public class ItemObject : MonoBehaviour
     public GameObject _bullet;
     public Transform _bulletTransform;
     public Collider _senseZone;
+    public float speed = 5;
 
     private bool _isPlayerInZone = false;
     private Transform _playerHand;
     private PlayerController _firstPlayerController;
+
+    // 장비중, 사용전
     private bool _is_equip = false;
     private bool _is_Use = false;
+
+
+    // 
+    private Vector3 _dir;
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -78,10 +86,25 @@ public class ItemObject : MonoBehaviour
         {
             _firstPlayerController.ShootiongaAnimation();
             _is_Use = true;
+            Camera cam = Camera.main;
+            Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f ,0));
+            RaycastHit hit;
+
+            Vector3 TargetPoint;
+
+            if(Physics.Raycast(ray, out hit, 100f))
+                TargetPoint = hit.point;
+            else
+                TargetPoint = ray.GetPoint(100f);
+
+            _dir = (TargetPoint - _bulletTransform.position).normalized;
+
         }
     }
     public void Shoot()
     {
-        Instantiate(_bullet, _bulletTransform.position, _bulletTransform.rotation);
+        GameObject bulletObj =  Instantiate(_bullet, _bulletTransform.position, Quaternion.LookRotation(_dir));
+        Bullet bullet = bulletObj.GetComponent<Bullet>();
+        bullet.Init(_dir, speed);
     }
 }

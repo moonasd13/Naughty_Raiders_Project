@@ -59,12 +59,12 @@ public class ItemSpawner : MonoBehaviour
         }
 
         // 2. 나머지 아이템 랜덤 스폰
-        for (int i = 0; i < otherCount; i++)
-        {
-            GameObject randomItem = Items[Random.Range(0, Items.Length)];
-            Instantiate(randomItem, spawnPoints[spawnIndex], Quaternion.identity);
-            spawnIndex++;
-        }
+        //for (int i = 0; i < otherCount; i++)
+        //{
+        //    GameObject randomItem = Items[Random.Range(0, Items.Length)];
+        //    Instantiate(randomItem, spawnPoints[spawnIndex], Quaternion.identity);
+        //    spawnIndex++;
+        //}
     }
 
 }
