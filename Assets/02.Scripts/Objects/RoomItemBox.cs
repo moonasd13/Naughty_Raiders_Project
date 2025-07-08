@@ -7,8 +7,7 @@ public class RoomItemBox : MonoBehaviour
     public BoxCollider RoomArea;
     public GameObject ScoreObject;
     [Header("Á¤º¸")]
-    [SerializeField]
-    public int boxCount { get; set; } = 0;
+    [SerializeField] public int boxCount { get; set; } = 0;
 
     private bool _isPlayerInZone = false;
     private Transform _playerHand;
@@ -20,7 +19,7 @@ public class RoomItemBox : MonoBehaviour
         {
             _isPlayerInZone = true;
             PlayerController controller = other.GetComponent<PlayerController>();
-            _playerHand = controller.handTransform;
+            _playerHand = controller.lefthandTransform;
             _playerController = controller;
         }
     }
@@ -68,6 +67,6 @@ public class RoomItemBox : MonoBehaviour
         instance.transform.localRotation = Quaternion.identity;
         instance.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         instance.transform.GetChild(0).GetComponent<Collider>().enabled = false;
-        instance.transform.GetChild(0).GetComponent<ScoreObject>().enabled = false;
+        instance.transform.GetChild(0).GetComponent<Coin>().enabled = false;
     }
 }
