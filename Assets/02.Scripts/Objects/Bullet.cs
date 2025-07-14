@@ -7,13 +7,19 @@ public class Bullet : MonoBehaviour
     public Collider _senseZone;
     private PlayerController _firstPlayerController;
 
+    private Vector3 moveDirection;
+    public float moveSpeed;
 
     public void Init(Vector3 direction, float speed)
     {
-        Rigidbody rb = GetComponent<Rigidbody>();
-        rb.linearVelocity = direction * speed;
+        moveDirection = direction.normalized;
+        moveSpeed = speed;
+    }
 
-        Destroy(gameObject, 5f);
+    private void Update()
+    {
+        transform.position += moveDirection * moveSpeed * Time.deltaTime;
+        Debug.DrawRay(transform.position, moveDirection * 3f, Color.red, 2f);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -24,11 +30,12 @@ public class Bullet : MonoBehaviour
             if (controller != null)
             {
                 _firstPlayerController = controller;
-                Debug.LogFormat("플레이어 명중");
-                Destroy(gameObject);
+                _firstPlayerController.stunON();
+                Debug.LogFormat("플레이어 명중: {0}", other.transform.parent.name);
+                //Destroy(gameObject);
             }
         }
 
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 }

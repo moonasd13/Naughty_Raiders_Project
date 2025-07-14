@@ -18,8 +18,8 @@ public class ItemObject : MonoBehaviour
     private bool _is_equip = false;
     private bool _is_Use = false;
 
-
     // 
+    Vector3 targetPoint;
     private Vector3 _dir;
 
 
@@ -86,25 +86,32 @@ public class ItemObject : MonoBehaviour
         {
             _firstPlayerController.ShootiongaAnimation();
             _is_Use = true;
+
             Camera cam = Camera.main;
-            Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f ,0));
+            Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
             RaycastHit hit;
 
-            Vector3 TargetPoint;
-
-            if(Physics.Raycast(ray, out hit, 100f))
-                TargetPoint = hit.point;
+            if (Physics.Raycast(ray, out hit, 100f))
+                targetPoint = hit.point;
             else
-                TargetPoint = ray.GetPoint(100f);
+                targetPoint = ray.GetPoint(100f);
 
-            _dir = (TargetPoint - _bulletTransform.position).normalized;
-
+            _dir = (targetPoint - cam.transform.position).normalized;
         }
     }
     public void Shoot()
     {
-        GameObject bulletObj =  Instantiate(_bullet, _bulletTransform.position, Quaternion.LookRotation(_dir));
+        Vector3 spawnPos = _bulletTransform.position;
+
+        Vector3 fixedDir = (targetPoint - spawnPos);
+
+        fixedDir.y = 0;
+
+        fixedDir = fixedDir.normalized;
+
+        GameObject bulletObj = Instantiate(_bullet, spawnPos, Quaternion.LookRotation(fixedDir));
+
         Bullet bullet = bulletObj.GetComponent<Bullet>();
-        bullet.Init(_dir, speed);
+        bullet.Init(fixedDir, speed);
     }
 }
