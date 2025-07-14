@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -120,6 +121,7 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
+        public bool _isStun { get; set; } = false;
 
         private bool IsCurrentDeviceMouse
         {
@@ -145,11 +147,11 @@ namespace StarterAssets
 
         private void Start()
         {
-            if(cinemachine_CM != null)
+            if (cinemachine_CM != null)
             {
-                if(!IsOwner)
+                if (IsOwner)
                 {
-                    cinemachine_CM.SetActive(false);
+                    cinemachine_CM.SetActive(true);
                 }
             }
 
@@ -174,12 +176,16 @@ namespace StarterAssets
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
-
             if(in_action == false)
             {
+                //if (!IsOwner) return;
                 JumpAndGravity();
                 GroundedCheck();
-                Move();
+
+                if (!_isStun)
+                {
+                    Move();
+                }
             }
         }
 
@@ -243,6 +249,7 @@ namespace StarterAssets
         /// </summary>
         private void Move()
         {
+            Debug.Log("Move 함수 호출");
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -413,6 +420,28 @@ namespace StarterAssets
                 _animator.SetBool("Shooting", true);
             }
         }
+
+        /// <summary>
+        /// 스턴 작용
+        /// </summary>
+        public void stunON()
+        {
+            _isStun = true;
+            StartCoroutine(StunTimer());
+
+        }
+
+        /// <summary>
+        /// 스턴 코루틴
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator StunTimer()
+        {
+            yield return new WaitForSeconds(3f);
+            _isStun = false;
+        }
+
+
 
         #region[애니메이션 이벤트]
         // 탄환 발사

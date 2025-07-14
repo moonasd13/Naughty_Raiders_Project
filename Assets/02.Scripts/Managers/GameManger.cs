@@ -25,7 +25,13 @@ public class GameManger : MonoBehaviour
 
 void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            if (Time.timeScale == 0f)
+                Time.timeScale = 1f;  // 재개
+            else
+                Time.timeScale = 0f;  // 일시정지
+        }
     }
 
     /// <summary>

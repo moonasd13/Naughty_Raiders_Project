@@ -93,7 +93,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2115702280481807893, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -2115702280481807893, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
       propertyPath: m_LocalRotation.x
@@ -101,7 +101,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2115702280481807893, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -2115702280481807893, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
       propertyPath: m_LocalRotation.z
@@ -109,7 +109,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2115702280481807893, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: -754973230152523361, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -158,6 +158,7 @@ MonoBehaviour:
   _bullet: {fileID: 2531174675575707382, guid: d60f0a10edf759a4b9defaf65a644d84, type: 3}
   _bulletTransform: {fileID: 6077591829981684924}
   _senseZone: {fileID: 732028349580105339}
+  speed: 5
 --- !u!135 &732028349580105339
 SphereCollider:
   m_ObjectHideFlags: 0
