@@ -178,7 +178,7 @@ namespace StarterAssets
             _hasAnimator = TryGetComponent(out _animator);
             if(in_action == false)
             {
-                //if (!IsOwner) return;
+                if (!IsOwner) return;
                 JumpAndGravity();
                 GroundedCheck();
 
@@ -205,6 +205,8 @@ namespace StarterAssets
 
         private void GroundedCheck()
         {
+            Debug.Log("GroundedCheck 함수 호출");
+            DebugUIManager.Instance?.Log("GroundedCheck() called by: " + OwnerClientId);
             // set sphere position, with offset
             Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
                 transform.position.z);
@@ -250,6 +252,7 @@ namespace StarterAssets
         private void Move()
         {
             Debug.Log("Move 함수 호출");
+            DebugUIManager.Instance?.Log("Move() called by: " + OwnerClientId);
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -313,6 +316,8 @@ namespace StarterAssets
         /// </summary>
         private void JumpAndGravity()
         {
+            Debug.Log("JumpAndGravity 함수 호출");
+            DebugUIManager.Instance?.Log("JumpAndGravity() called by: " + OwnerClientId);
             if (Grounded)
             {
                 // reset the fall timeout timer
