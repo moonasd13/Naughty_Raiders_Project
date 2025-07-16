@@ -2,6 +2,8 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
+using UnityEngine.Windows;
+
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -119,9 +121,13 @@ namespace StarterAssets
         private GameObject _mainCamera;
 
         private const float _threshold = 0.01f;
+        // 서버에 보낼값
+        private Vector2 _serverInputMove;
+        private bool _serverInputSprint;
 
         private bool _hasAnimator;
         public bool _isStun { get; set; } = false;
+
 
         private bool IsCurrentDeviceMouse
         {
@@ -159,6 +165,7 @@ namespace StarterAssets
 
             _hasAnimator = TryGetComponent(out _animator);
             _controller = GetComponent<CharacterController>();
+
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM
             _playerInput = GetComponent<PlayerInput>();
@@ -168,6 +175,12 @@ namespace StarterAssets
 
             AssignAnimationIDs();
 
+            if(!IsOwner)
+            {
+                GetComponent<PlayerInput>().enabled = false;
+                GetComponent<StarterAssetsInputs>().enabled = false;
+            }
+
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
@@ -176,22 +189,43 @@ namespace StarterAssets
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
-            if(in_action == false)
+            if (in_action == false)
             {
-                if (!IsOwner) return;
-                JumpAndGravity();
-                GroundedCheck();
+                GroundedCheck(); // 클라든 서버든 체크 가능
 
-                if (!_isStun)
+                if (IsOwner)
                 {
+                    // 입력을 서버로 보내는 역할만 수행
+                    MoveServerRpc(_input.move, _input.sprint);
+                }
+
+                if (IsServer && !_isStun)
+                {
+                    // 서버만 실제로 움직임 실행
+                    _input.move = _serverInputMove;
+                    _input.sprint = _serverInputSprint;
+                    JumpAndGravity(); // 이 부분도 서버만 처리해야 함
                     Move();
                 }
             }
         }
 
+
+
         private void LateUpdate()
         {
-            CameraRotation();
+            if (IsOwner)
+            {
+                float yawInput = _input.look.x;
+
+                if (Mathf.Abs(yawInput) > 0.01f)
+                {
+                    float yawDelta = yawInput * RotationSpeed * (IsCurrentDeviceMouse ? 1f : Time.deltaTime);
+                    RotateServerRpc(yawDelta);
+                }
+
+                CameraRotation(); // 클라용 Pitch 조정 (시각용)
+            }
         }
 
         private void AssignAnimationIDs()
@@ -205,7 +239,6 @@ namespace StarterAssets
 
         private void GroundedCheck()
         {
-            Debug.Log("GroundedCheck 함수 호출");
             DebugUIManager.Instance?.Log("GroundedCheck() called by: " + OwnerClientId);
             // set sphere position, with offset
             Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
@@ -247,11 +280,22 @@ namespace StarterAssets
         }
 
         /// <summary>
+        /// 움직임 서버 RPC
+        /// </summary>
+        /// <param name="move"></param>
+        /// <param name="sprint"></param>
+        [ServerRpc]
+        void MoveServerRpc(Vector2 move, bool sprint)
+        {
+            _serverInputMove = move;
+            _serverInputSprint = sprint;
+        }
+
+        /// <summary>
         /// 움직임
         /// </summary>
         private void Move()
         {
-            Debug.Log("Move 함수 호출");
             DebugUIManager.Instance?.Log("Move() called by: " + OwnerClientId);
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
@@ -316,7 +360,6 @@ namespace StarterAssets
         /// </summary>
         private void JumpAndGravity()
         {
-            Debug.Log("JumpAndGravity 함수 호출");
             DebugUIManager.Instance?.Log("JumpAndGravity() called by: " + OwnerClientId);
             if (Grounded)
             {
@@ -383,6 +426,17 @@ namespace StarterAssets
             {
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
+        }
+
+
+        /// <summary>
+        /// 카메라 회전 RPC
+        /// </summary>
+        /// <param name="yawDelta"></param>
+        [ServerRpc]
+        void RotateServerRpc(float yawDelta)
+        {
+            transform.Rotate(Vector3.up * yawDelta);
         }
 
         /// <summary>
