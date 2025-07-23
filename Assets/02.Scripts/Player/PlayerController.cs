@@ -175,11 +175,11 @@ namespace StarterAssets
 
             AssignAnimationIDs();
 
-            if(!IsOwner)
-            {
-                GetComponent<PlayerInput>().enabled = false;
-                GetComponent<StarterAssetsInputs>().enabled = false;
-            }
+            //if(!IsOwner)
+            //{
+            //    GetComponent<PlayerInput>().enabled = false;
+            //    GetComponent<StarterAssetsInputs>().enabled = false;
+            //}
 
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
@@ -188,12 +188,14 @@ namespace StarterAssets
 
         private void Update()
         {
+            if (!IsSpawned) return;
+
             _hasAnimator = TryGetComponent(out _animator);
             if (in_action == false)
             {
                 GroundedCheck(); // 클라든 서버든 체크 가능
 
-                if (IsOwner)
+                if (IsOwner && IsClient)
                 {
                     // 입력을 서버로 보내는 역할만 수행
                     MoveServerRpc(_input.move, _input.sprint);
@@ -209,7 +211,25 @@ namespace StarterAssets
                 }
             }
         }
+        public override void OnNetworkSpawn()
+        {
+            if (IsOwner)
+            {
+                cinemachine_CM?.SetActive(true);
+            }
 
+            // 클라이언트가 소유하지 않은 경우 입력 비활성화
+            if (!IsOwner)
+            {
+                if (TryGetComponent(out PlayerInput input))
+                    input.enabled = false;
+
+                if (TryGetComponent(out StarterAssetsInputs sai))
+                    sai.enabled = false;
+            }
+
+            Debug.Log($"[OnNetworkSpawn - ClientId: {OwnerClientId}] IsOwner: {IsOwner}");
+        }
 
 
         private void LateUpdate()

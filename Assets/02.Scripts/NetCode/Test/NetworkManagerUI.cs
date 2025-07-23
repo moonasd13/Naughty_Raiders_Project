@@ -16,14 +16,14 @@ public class NetworkManagerUI : MonoBehaviour
 
         serverBtn.AddEvent(() =>
         {
-            NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
+            //NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
             NetworkManager.Singleton.StartServer();
             Debug.Log("서버로 시작했습니다.");
         });
 
         hostBtn.AddEvent(() =>
         {
-            NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
+            //NetworkManager.Singleton.OnClientConnectedCallback += HandleClientConnected;
             NetworkManager.Singleton.StartHost();
             Debug.Log("호스트로 시작했습니다.");
         });
