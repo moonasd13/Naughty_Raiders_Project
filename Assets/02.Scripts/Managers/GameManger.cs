@@ -20,7 +20,7 @@ public class GameManger : MonoBehaviour
 
     void Start()
     {
-        GameSatart();
+       
     }
 
 void Update()
@@ -109,6 +109,10 @@ void Update()
         if (GUI.Button(new Rect(10, 10, 120, 40), "Click Me"))
         {
             ScoreCounting();
+        }
+        if (GUI.Button(new Rect(10, 60, 120, 40), "spawn"))
+        {
+            GameSatart();
         }
     }
 
