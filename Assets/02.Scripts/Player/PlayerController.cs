@@ -197,8 +197,9 @@ namespace StarterAssets
 
                 if (IsOwner && IsClient)
                 {
-                    // 입력을 서버로 보내는 역할만 수행
-                    MoveServerRpc(_input.move, _input.sprint);
+                    MoveServerRpc(_input.move, _input.sprint, _input.jump);
+                    // 점프 입력은 한 번만 보내고 클라이언트에서 즉시 false로 리셋
+                    _input.jump = false;
                 }
 
                 if (IsServer && !_isStun)
@@ -305,10 +306,15 @@ namespace StarterAssets
         /// <param name="move"></param>
         /// <param name="sprint"></param>
         [ServerRpc]
-        void MoveServerRpc(Vector2 move, bool sprint)
+        void MoveServerRpc(Vector2 move, bool sprint, bool jump)
         {
             _serverInputMove = move;
             _serverInputSprint = sprint;
+
+            if (jump && _jumpTimeoutDelta <= 0.0f && Grounded)
+            {
+                DoJump();
+            }
         }
 
         /// <summary>
@@ -399,18 +405,18 @@ namespace StarterAssets
                     _verticalVelocity = -2f;
                 }
 
-                // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f)
-                {
-                    // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+                //// Jump
+                //if (_input.jump && _jumpTimeoutDelta <= 0.0f)
+                //{
+                //    // the square root of H * -2 * G = how much velocity needed to reach desired height
+                //    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 
-                    // update animator if using character
-                    if (_hasAnimator)
-                    {
-                        _animator.SetBool(_animIDJump, true);
-                    }
-                }
+                //    // update animator if using character
+                //    if (_hasAnimator)
+                //    {
+                //        _animator.SetBool(_animIDJump, true);
+                //    }
+                //}
 
                 // jump timeout
                 if (_jumpTimeoutDelta >= 0.0f)
@@ -446,6 +452,21 @@ namespace StarterAssets
             {
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
+        }
+        /// <summary>
+        /// 서버 점프 처리
+        /// </summary>
+        private void DoJump()
+        {
+            _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+
+            // 애니메이션 처리
+            if (_hasAnimator)
+            {
+                _animator.SetBool(_animIDJump, true);
+            }
+
+            _jumpTimeoutDelta = JumpTimeout;  // 점프 딜레이 설정
         }
 
 
