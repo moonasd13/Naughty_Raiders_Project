@@ -31,11 +31,10 @@ public class Bullet : MonoBehaviour
             {
                 _firstPlayerController = controller;
                 _firstPlayerController.stunON();
-                Debug.LogFormat("플레이어 명중: {0}", other.transform.parent.name);
-                //Destroy(gameObject);
+                Destroy(gameObject);
             }
         }
 
-        //Destroy(gameObject);
+        Destroy(gameObject);
     }
 }

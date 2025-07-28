@@ -1,11 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.AI.Navigation;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class ItemSpawner : MonoBehaviour
+public class ItemSpawner : NetworkBehaviour
 {
     public GameObject coin;
     public GameObject[] Items;
@@ -48,7 +46,10 @@ public class ItemSpawner : MonoBehaviour
         {
             Transform spawnPoint = shuffledList[i];
             GameObject coinObj = Instantiate(coin, spawnPoint.position, Quaternion.identity);
-            coinObj.GetComponent<NetworkObject>().Spawn();
+            var netObj = coinObj.GetComponent<NetworkObject>();
+            netObj.TrySetParent(parentTransform.GetComponent<NetworkObject>());
+            netObj.Spawn(true);
+            //coinObj.GetComponent<NetworkObject>().Spawn();
         }
 
         // 아이템 생성 (코인과 다른 위치에서)
@@ -57,7 +58,10 @@ public class ItemSpawner : MonoBehaviour
             Transform spawnPoint = shuffledList[actualCoinCount + i];
             GameObject randomItem = Items[Random.Range(0, Items.Length)];
             GameObject itemObj = Instantiate(randomItem, spawnPoint.position, Quaternion.identity);
-            itemObj.GetComponent<NetworkObject>().Spawn();
+            var netObj = itemObj.GetComponent<NetworkObject>();
+            netObj.TrySetParent(parentTransform.GetComponent<NetworkObject>());
+            netObj.Spawn(true);
+            //itemObj.GetComponent<NetworkObject>().Spawn();
         }
     }
     private void ShuffleList<T>(List<T> list)

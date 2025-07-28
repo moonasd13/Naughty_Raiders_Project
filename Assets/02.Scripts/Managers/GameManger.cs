@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,6 +18,7 @@ public class GameManger : MonoBehaviour
     private int Room03_Score = 0;
     private int Room04_Score = 0;
     private bool countingEnd = false;
+    private bool is_GameStart = false;
 
     void Start()
     {
@@ -25,37 +27,12 @@ public class GameManger : MonoBehaviour
 
 void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if(NetworkManager.Singleton.IsHost && !is_GameStart)
         {
-            if (Time.timeScale == 0f)
-                Time.timeScale = 1f;  // 재개
-            else
-                Time.timeScale = 0f;  // 일시정지
+            GameStart();
+            is_GameStart=true;
+            Debug.Log("스폰끝");
         }
-    }
-
-    /// <summary>
-    /// 플레이어 생성
-    /// </summary>
-    private void InitPlayer()
-    {
-        GameObject prefab01 = Resources.Load<GameObject>("Prefabs/Player/Player01");
-        //GameObject prefab02 = Resources.Load<GameObject>("Prefabs/Player/Player02");
-        //GameObject prefab03 = Resources.Load<GameObject>("Prefabs/Player/Player03");
-        //GameObject prefab04 = Resources.Load<GameObject>("Prefabs/Player/Player04");
-
-        if (prefab01 != null)
-        {
-            Instantiate(prefab01, Room_StartPoses[0].position, Room_StartPoses[0].rotation);
-            //Instantiate(prefab02, Room_StartPoses[1].position, Room_StartPoses[1].rotation);
-            //Instantiate(prefab03, Room_StartPoses[2].position, Room_StartPoses[2].rotation);
-            //Instantiate(prefab04, Room_StartPoses[3].position, Room_StartPoses[3].rotation);
-        }
-        else
-        {
-            Debug.LogError("프리팹을 찾을 수 없습니다.");
-        }
-
     }
 
     /// <summary>
@@ -93,13 +70,12 @@ void Update()
     /// <summary>
     /// 게임 시작시 세팅
     /// </summary>
-    private void GameSatart()
+    private void GameStart()
     {
         Room01_Score = 0;
         Room02_Score = 0;
         Room03_Score = 0;
         Room04_Score = 0;
-        //InitPlayer();
         itemSpawner.SpawnerOn();
     }
 
@@ -109,10 +85,6 @@ void Update()
         if (GUI.Button(new Rect(10, 10, 120, 40), "Click Me"))
         {
             ScoreCounting();
-        }
-        if (GUI.Button(new Rect(10, 60, 120, 40), "spawn"))
-        {
-            GameSatart();
         }
     }
 
