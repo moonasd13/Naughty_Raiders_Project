@@ -3,6 +3,8 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
 using UnityEngine.Windows;
+using UnityEngine.Rendering.Universal;
+
 
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -87,7 +89,8 @@ namespace StarterAssets
         public bool inHand = false;
 
         private bool in_action = false;
-        private ItemObject Item;
+        public GameObject[] item_List;
+        public ItemObject Item;
 
         // cinemachine
         [SerializeField] public GameObject cinemachine_CM;
@@ -175,13 +178,6 @@ namespace StarterAssets
 
             AssignAnimationIDs();
 
-            //if(!IsOwner)
-            //{
-            //    GetComponent<PlayerInput>().enabled = false;
-            //    GetComponent<StarterAssetsInputs>().enabled = false;
-            //}
-
-            // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
         }
@@ -209,6 +205,11 @@ namespace StarterAssets
                     _input.sprint = _serverInputSprint;
                     JumpAndGravity(); // 이 부분도 서버만 처리해야 함
                     Move();
+                    if (equip && UnityEngine.Input.GetKeyDown(KeyCode.F))
+                    {
+                        Debug.Log("f입력");
+                        ShootiongaAnimation();
+                    }
                 }
             }
         }
@@ -228,8 +229,6 @@ namespace StarterAssets
                 if (TryGetComponent(out StarterAssetsInputs sai))
                     sai.enabled = false;
             }
-
-            Debug.Log($"[OnNetworkSpawn - ClientId: {OwnerClientId}] IsOwner: {IsOwner}");
         }
 
 
@@ -453,6 +452,7 @@ namespace StarterAssets
                 _verticalVelocity += Gravity * Time.deltaTime;
             }
         }
+
         /// <summary>
         /// 서버 점프 처리
         /// </summary>
@@ -494,20 +494,6 @@ namespace StarterAssets
             return Mathf.Clamp(lfAngle, lfMin, lfMax);
         }
 
-        private void OnDrawGizmosSelected()
-        {
-            Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
-            Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
-
-            if (Grounded) Gizmos.color = transparentGreen;
-            else Gizmos.color = transparentRed;
-
-            // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
-            Gizmos.DrawSphere(
-                new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z),
-                GroundedRadius);
-        }
-
         /// <summary>
         /// 테이져건 발사
         /// </summary>
@@ -515,9 +501,14 @@ namespace StarterAssets
         {
             if(equip == true)
             {
-                Item = righthandTransform.GetChild(0).gameObject.GetComponent<ItemObject>();
                 in_action = true;
+                GameObject itemObj = Instantiate(item_List[0], righthandTransform.position, righthandTransform.rotation);
+                var netObj = itemObj.GetComponent<NetworkObject>();
+                netObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                netObj.Spawn(true);
+                Item = netObj.GetComponent<ItemObject>();
                 _animator.SetBool("Shooting", true);
+                Debug.Log("발사");
             }
         }
 
@@ -541,13 +532,10 @@ namespace StarterAssets
             _isStun = false;
         }
 
-
-
         #region[애니메이션 이벤트]
         // 탄환 발사
         private void Shoot()
         {
-            Item.Shoot();
         }
 
 
@@ -557,7 +545,8 @@ namespace StarterAssets
             in_action = false;
             equip = false;
             _animator.SetBool("Shooting", false);
-            Destroy(righthandTransform.GetChild(0).gameObject);
+            Destroy(Item.gameObject);
+            Item = null;
         }
 
         //발소리

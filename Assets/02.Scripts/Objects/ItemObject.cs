@@ -1,27 +1,15 @@
 using StarterAssets;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class ItemObject : MonoBehaviour
+public class ItemObject : NetworkBehaviour
 {
     [SerializeField]
-    public GameObject _bullet;
-    public Transform _bulletTransform;
     public Collider _senseZone;
-    public float speed = 5;
 
     private bool _isPlayerInZone = false;
-    private Transform _playerHand;
     private PlayerController _firstPlayerController;
-
-    // 장비중, 사용전
-    private bool _is_equip = false;
-    private bool _is_Use = false;
-
-    // 
-    Vector3 targetPoint;
-    private Vector3 _dir;
-
 
     private void OnTriggerEnter(Collider other)
     {
@@ -32,7 +20,6 @@ public class ItemObject : MonoBehaviour
             {
                 _isPlayerInZone = true;
                 _firstPlayerController = controller;
-                _playerHand = controller.righthandTransform;
             }
         }
     }
@@ -44,7 +31,6 @@ public class ItemObject : MonoBehaviour
             if (controller == _firstPlayerController)
             {
                 _isPlayerInZone = false;
-                _playerHand = null;
                 _firstPlayerController = null;
             }
         }
@@ -52,66 +38,26 @@ public class ItemObject : MonoBehaviour
 
     private void Update()
     {
-        if (_isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.equip == false)
+        if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.equip == false)
         {
-            AttachToHand();
-        }
-
-        if (_is_Use == false && _is_equip)
-        {
-            firing();
+            RequestPickupServerRpc(NetworkManager.LocalClientId);
         }
     }
 
     /// <summary>
-    /// 부착
+    /// 서버에게 실질적으로 수행해야하는 RPC전송
     /// </summary>
-    private void AttachToHand()
+    /// <param name="requestingClientId"></param>
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestPickupServerRpc(ulong requestingClientId)
     {
+        if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
+            return;
+
+        if (_firstPlayerController.equip || !_isPlayerInZone)
+            return;
+
         _firstPlayerController.equip = true;
-        transform.SetParent(_playerHand);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
-        transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-        GetComponent<Collider>().enabled = false;
-        _is_equip = true;
-    }
-
-    /// <summary>
-    /// 발사
-    /// </summary>
-    private void firing()
-    {
-        if(Input.GetKeyDown(KeyCode.F))
-        {
-            _firstPlayerController.ShootiongaAnimation();
-            _is_Use = true;
-
-            Camera cam = Camera.main;
-            Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, 100f))
-                targetPoint = hit.point;
-            else
-                targetPoint = ray.GetPoint(100f);
-
-            _dir = (targetPoint - cam.transform.position).normalized;
-        }
-    }
-    public void Shoot()
-    {
-        Vector3 spawnPos = _bulletTransform.position;
-
-        Vector3 fixedDir = (targetPoint - spawnPos);
-
-        fixedDir.y = 0;
-
-        fixedDir = fixedDir.normalized;
-
-        GameObject bulletObj = Instantiate(_bullet, spawnPos, Quaternion.LookRotation(fixedDir));
-
-        Bullet bullet = bulletObj.GetComponent<Bullet>();
-        bullet.Init(fixedDir, speed);
+        Destroy(this.gameObject);
     }
 }

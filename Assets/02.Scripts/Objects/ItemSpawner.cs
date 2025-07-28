@@ -22,8 +22,6 @@ public class ItemSpawner : NetworkBehaviour
         {
             SpawnList.Add(child);
         }
-
-        Debug.Log($"총 스폰 위치 수: {SpawnList.Count}");
     }
 
     public void SpawnerOn()
@@ -41,15 +39,29 @@ public class ItemSpawner : NetworkBehaviour
         int actualCoinCount = Mathf.Min(CoinCount, shuffledList.Count);
         int actualItemCount = Mathf.Min(ItemCount, shuffledList.Count - actualCoinCount);
 
+
+        NetworkObject parentNetworkObject = parentTransform.GetComponent<NetworkObject>();
+
+      
+        if (!parentNetworkObject.IsSpawned)
+        {
+            Debug.LogError($"[ItemSpawner] Parent NetworkObject '{parentTransform.name}' is not yet spawned. Cannot set parent for children.");
+            return; // 스폰되지 않았다면 리턴
+        }
+        else
+        {
+            Debug.Log(parentNetworkObject);
+        }
+
         // 코인 생성
         for (int i = 0; i < actualCoinCount; i++)
         {
             Transform spawnPoint = shuffledList[i];
             GameObject coinObj = Instantiate(coin, spawnPoint.position, Quaternion.identity);
             var netObj = coinObj.GetComponent<NetworkObject>();
-            netObj.TrySetParent(parentTransform.GetComponent<NetworkObject>());
             netObj.Spawn(true);
-            //coinObj.GetComponent<NetworkObject>().Spawn();
+            netObj.TrySetParent(parentNetworkObject);
+
         }
 
         // 아이템 생성 (코인과 다른 위치에서)
@@ -59,10 +71,11 @@ public class ItemSpawner : NetworkBehaviour
             GameObject randomItem = Items[Random.Range(0, Items.Length)];
             GameObject itemObj = Instantiate(randomItem, spawnPoint.position, Quaternion.identity);
             var netObj = itemObj.GetComponent<NetworkObject>();
-            netObj.TrySetParent(parentTransform.GetComponent<NetworkObject>());
             netObj.Spawn(true);
-            //itemObj.GetComponent<NetworkObject>().Spawn();
+            netObj.TrySetParent(parentNetworkObject);
         }
+
+
     }
     private void ShuffleList<T>(List<T> list)
     {

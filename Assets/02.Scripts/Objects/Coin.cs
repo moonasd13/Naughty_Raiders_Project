@@ -1,13 +1,13 @@
 using StarterAssets;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Coin : MonoBehaviour
+public class Coin : NetworkBehaviour
 {
     [SerializeField]
     public Collider _senseZone;
 
     private bool _isPlayerInZone = false;
-    private Transform _playerHand;
     private PlayerController _firstPlayerController;
 
     private void OnTriggerEnter(Collider other)
@@ -19,7 +19,7 @@ public class Coin : MonoBehaviour
             {
                 _isPlayerInZone = true;
                 _firstPlayerController = controller;
-                _playerHand = controller.lefthandTransform;
+
             }
         }
     }
@@ -32,7 +32,6 @@ public class Coin : MonoBehaviour
             if (controller == _firstPlayerController)
             {
                 _isPlayerInZone = false;
-                _playerHand = null;
                 _firstPlayerController = null;
             }
         }
@@ -40,23 +39,28 @@ public class Coin : MonoBehaviour
 
     private void Update()
     {
-        if (_isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.inHand == false)
+        // 물건을 잡을수 있는 조건
+        if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.inHand == false)
         {
-            AttachToHand();
+            RequestPickupServerRpc(NetworkManager.LocalClientId);
         }
     }
 
-    private void AttachToHand()
+    /// <summary>
+    /// 서버에게 실질적으로 수행해야하는 RPC전송
+    /// </summary>
+    /// <param name="requestingClientId"></param>
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestPickupServerRpc(ulong requestingClientId)
     {
+        if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
+            return;
+
+        if (_firstPlayerController.inHand || !_isPlayerInZone)
+            return;
+
         _firstPlayerController.inHand = true;
-        transform.SetParent(_playerHand);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
-        transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-        _isPlayerInZone = false;
-        _playerHand = null;
-        _firstPlayerController = null;
-        GetComponent<Collider>().enabled = false;
-        this.enabled = false;
+
+        Destroy(this.gameObject);
     }
 }

@@ -999,6 +999,9 @@ MonoBehaviour:
   lefthandTransform: {fileID: 982141027165598653}
   equip: 0
   inHand: 0
+  item_List:
+  - {fileID: 6542153327835142291, guid: 47340b6f31cc54a4098c466b964ff58f, type: 3}
+  Item: {fileID: 7995518799640152259, guid: 47340b6f31cc54a4098c466b964ff58f, type: 3}
   cinemachine_CM: {fileID: 4537525817153230375}
 --- !u!114 &5596225311696598629
 MonoBehaviour:
@@ -1034,7 +1037,7 @@ MonoBehaviour:
   jump: 0
   sprint: 0
   analogMovement: 0
-  cursorLocked: 1
+  cursorLocked: 0
   cursorInputForLook: 1
 --- !u!114 &4216360730143626773
 MonoBehaviour:

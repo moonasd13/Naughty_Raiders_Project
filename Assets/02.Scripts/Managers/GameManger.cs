@@ -31,7 +31,6 @@ void Update()
         {
             GameStart();
             is_GameStart=true;
-            Debug.Log("½ºÆù³¡");
         }
     }
 

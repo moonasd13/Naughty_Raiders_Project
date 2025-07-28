@@ -1,7 +1,8 @@
 using StarterAssets;
+using Unity.Netcode;
 using UnityEngine;
 
-public class RoomItemBox : MonoBehaviour
+public class RoomItemBox : NetworkBehaviour
 {
     [SerializeField]
     public BoxCollider RoomArea;
@@ -10,7 +11,6 @@ public class RoomItemBox : MonoBehaviour
     [SerializeField] public int boxCount { get; set; } = 0;
 
     private bool _isPlayerInZone = false;
-    private Transform _playerHand;
     private PlayerController _playerController;
 
     private void OnTriggerEnter(Collider other)
@@ -19,7 +19,6 @@ public class RoomItemBox : MonoBehaviour
         {
             _isPlayerInZone = true;
             PlayerController controller = other.GetComponent<PlayerController>();
-            _playerHand = controller.lefthandTransform;
             _playerController = controller;
         }
     }
@@ -29,44 +28,27 @@ public class RoomItemBox : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             _isPlayerInZone = false;
-            _isPlayerInZone = false;
-            _playerHand = null;
             _playerController = null;
         }
     }
 
     private void Update()
     {
-        if (_playerController == null || _playerHand == null)
+        if (_playerController == null)
             return;
 
-        else if (_isPlayerInZone && Input.GetKeyDown(KeyCode.E))
+        if (IsClient && _isPlayerInZone && Input.GetKeyDown(KeyCode.E))
         {
-            if (_playerHand != null && _playerHand.childCount > 0)
+            if (_playerController.inHand)
             {
-                Transform heldObject = _playerHand.GetChild(0);
-                GameObject obj = heldObject.gameObject;
-
                 _playerController.inHand = false;
-                Destroy(heldObject.gameObject);
                 boxCount++;
             }
-            else if (_playerHand != null && _playerHand.childCount <= 0 && boxCount >= 1)
+            else if (!_playerController.inHand && boxCount >= 1)
             {
-                AttachToHand();
+                _playerController.inHand = true;
                 boxCount--;
             }
         }
-    }
-
-    private void AttachToHand()
-    {
-        GameObject instance = Instantiate(ScoreObject, _playerHand);
-        _playerController.inHand = true;
-        instance.transform.localPosition = Vector3.zero;
-        instance.transform.localRotation = Quaternion.identity;
-        instance.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-        instance.transform.GetChild(0).GetComponent<Collider>().enabled = false;
-        instance.transform.GetChild(0).GetComponent<Coin>().enabled = false;
     }
 }
