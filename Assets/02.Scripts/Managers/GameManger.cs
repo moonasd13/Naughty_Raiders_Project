@@ -48,7 +48,7 @@ void Update()
                 RoomItemBox box = child.GetComponent<RoomItemBox>();
                 if (box != null)
                 {
-                    scores[i] += box.boxCount;
+                    scores[i] += box.boxCount.Value;
                 }
             }
         }
