@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "333727792208",
+    "firebase_url": "https://naeunfirebasetest-default-rtdb.firebaseio.com",
+    "project_id": "naeunfirebasetest",
+    "storage_bucket": "naeunfirebasetest.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:333727792208:android:6036ee87bf6fd7a2192555",
+        "android_client_info": {
+          "package_name": "com.Naeun.firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA62bzwAXm0hRHLPoSFifwnznCqIq1Ebsc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
