@@ -128,13 +128,13 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
       insertIndex: -1
+      addedObject: {fileID: -510608313780975133}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 7995518799640152259}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 732028349580105339}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: -510608313780975133}
   m_SourcePrefab: {fileID: 100100000, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
 --- !u!4 &3794440910887453737 stripped
 Transform:
@@ -146,6 +146,31 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
   m_PrefabInstance: {fileID: 6200062625729865154}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &-510608313780975133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6542153327835142291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2768204280
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &7995518799640152259
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,10 +183,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3df4011c9d3a607478c6842a7065dd98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bullet: {fileID: 2531174675575707382, guid: d60f0a10edf759a4b9defaf65a644d84, type: 3}
-  _bulletTransform: {fileID: 6077591829981684924}
+  ShowTopMostFoldoutHeaderGroup: 1
   _senseZone: {fileID: 732028349580105339}
-  speed: 5
+  bullet: {fileID: 2531174675575707382, guid: d60f0a10edf759a4b9defaf65a644d84, type: 3}
+  bulletPos: {fileID: 6077591829981684924}
 --- !u!135 &732028349580105339
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -183,28 +208,3 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &-510608313780975133
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6542153327835142291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 0
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0

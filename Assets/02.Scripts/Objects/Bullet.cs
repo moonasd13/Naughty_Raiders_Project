@@ -1,7 +1,8 @@
 using StarterAssets;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : NetworkBehaviour
 {
     [SerializeField]
     public Collider _senseZone;
@@ -10,20 +11,22 @@ public class Bullet : MonoBehaviour
     private Vector3 moveDirection;
     public float moveSpeed;
 
-    public void Init(Vector3 direction, float speed)
+    public void SetDirection(Vector3 direction)
     {
         moveDirection = direction.normalized;
-        moveSpeed = speed;
     }
 
     private void Update()
     {
+        if (!IsServer) return;
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
-        Debug.DrawRay(transform.position, moveDirection * 3f, Color.red, 2f);
+        Debug.Log("≈∫»Ø");
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!IsServer) return;
+
         if (other.CompareTag("Player") && _firstPlayerController == null)
         {
             PlayerController controller = other.GetComponent<PlayerController>();
@@ -31,10 +34,10 @@ public class Bullet : MonoBehaviour
             {
                 _firstPlayerController = controller;
                 _firstPlayerController.stunON();
-                Destroy(gameObject);
+                Debug.Log(other + "∏Ì¡ﬂ");
             }
         }
 
-        Destroy(gameObject);
+        GetComponent<NetworkObject>().Despawn(true);
     }
 }

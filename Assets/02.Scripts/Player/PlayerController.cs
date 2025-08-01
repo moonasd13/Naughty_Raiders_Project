@@ -502,13 +502,7 @@ namespace StarterAssets
             if(equip == true)
             {
                 in_action = true;
-                GameObject itemObj = Instantiate(item_List[0], righthandTransform.position, righthandTransform.rotation);
-                var netObj = itemObj.GetComponent<NetworkObject>();
-                netObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                netObj.Spawn(true);
-                Item = netObj.GetComponent<ItemObject>();
                 _animator.SetBool("Shooting", true);
-                Debug.Log("발사");
             }
         }
 
@@ -518,6 +512,7 @@ namespace StarterAssets
         public void stunON()
         {
             _isStun = true;
+            Debug.Log("스턴걸림");
             StartCoroutine(StunTimer());
 
         }
@@ -529,6 +524,7 @@ namespace StarterAssets
         private IEnumerator StunTimer()
         {
             yield return new WaitForSeconds(3f);
+            Debug.Log("스턴풀림");
             _isStun = false;
         }
 
@@ -536,6 +532,15 @@ namespace StarterAssets
         // 탄환 발사
         private void Shoot()
         {
+            Quaternion fireRotation = Quaternion.LookRotation(Camera.main.transform.forward);
+            fireRotation.z = 0;
+            fireRotation.x = 0;
+            GameObject itemObj = Instantiate(item_List[0], righthandTransform.position, fireRotation);
+            var netObj = itemObj.GetComponent<NetworkObject>();
+            netObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            netObj.Spawn(true);
+            Item = netObj.GetComponent<ItemObject>();
+            Item.Fire();
         }
 
 
