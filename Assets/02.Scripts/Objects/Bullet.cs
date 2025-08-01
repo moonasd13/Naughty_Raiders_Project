@@ -9,6 +9,7 @@ public class Bullet : NetworkBehaviour
     private PlayerController _firstPlayerController;
 
     private Vector3 moveDirection;
+    public float rayDistance = 0.5f;
     public float moveSpeed;
 
     public void SetDirection(Vector3 direction)
@@ -19,7 +20,20 @@ public class Bullet : NetworkBehaviour
     private void Update()
     {
         if (!IsServer) return;
+
+        Ray ray = new Ray(transform.position, moveDirection);
+        if (Physics.Raycast(ray, out RaycastHit hit, rayDistance))
+        {
+            if (hit.collider.CompareTag("Wall"))
+            {
+                // º®¿¡ ºÎµúÈû
+                Debug.Log("º® Ãæµ¹ ¡æ ÆÄ±«µÊ");
+                GetComponent<NetworkObject>().Despawn(true);
+                return;
+            }
+        }
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
+
         Debug.Log("ÅºÈ¯");
     }
 
