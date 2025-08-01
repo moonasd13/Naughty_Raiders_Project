@@ -4,6 +4,8 @@ using Unity.Netcode;
 using System.Collections;
 using UnityEngine.Windows;
 using UnityEngine.Rendering.Universal;
+using Unity.Netcode.Components;
+
 
 
 #if ENABLE_INPUT_SYSTEM
