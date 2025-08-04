@@ -7,7 +7,12 @@ public class ItemObject : NetworkBehaviour
 {
     [SerializeField]
     public Collider _senseZone;
+    [SerializeField]
+    public GameObject bullet;
+    public Transform bulletPos;
 
+
+    Bullet codebullet;
     private bool _isPlayerInZone = false;
     private PlayerController _firstPlayerController;
 
@@ -43,6 +48,35 @@ public class ItemObject : NetworkBehaviour
             RequestPickupServerRpc(NetworkManager.LocalClientId);
         }
     }
+
+    /// <summary>
+    /// 탄환 RPC
+    /// </summary>
+    /// <param name="direction"></param>
+    [ServerRpc]
+    public void FireServerRpc(Vector3 direction)
+    {
+        Vector3 pos = bulletPos.transform.position;
+        Quaternion fireRotation = Quaternion.LookRotation(direction);
+
+        GameObject itemObj = Instantiate(bullet, pos, fireRotation);
+        var netObj = itemObj.GetComponent<NetworkObject>();
+        netObj.Spawn(true);
+
+        Bullet codebullet = netObj.GetComponent<Bullet>();
+        codebullet.SetDirection(direction);
+    }
+
+    /// <summary>
+    /// 발사
+    /// </summary>
+    public void Fire()
+    {
+        Vector3 shootDir = Camera.main.transform.forward;
+        FireServerRpc(shootDir);
+    }
+
+
 
     /// <summary>
     /// 서버에게 실질적으로 수행해야하는 RPC전송
