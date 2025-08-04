@@ -5,6 +5,8 @@ using System.Collections;
 using UnityEngine.Windows;
 using UnityEngine.Rendering.Universal;
 using Unity.Netcode.Components;
+using UnityEditor.Rendering;
+
 
 
 
@@ -87,10 +89,19 @@ namespace StarterAssets
         [Header("pos")]
         public Transform righthandTransform;
         public Transform lefthandTransform;
-        public bool equip = false;
-        public bool inHand = false;
+        public NetworkVariable<bool> equip = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Server);
+        public NetworkVariable<bool> inHand = new NetworkVariable<bool>(
+            false,
+            NetworkVariableReadPermission.Everyone,
+            NetworkVariableWritePermission.Server);
 
-        private bool in_action = false;
+        public NetworkVariable<bool> in_action = new NetworkVariable<bool>(
+           false,
+           NetworkVariableReadPermission.Everyone,
+           NetworkVariableWritePermission.Server);
         public GameObject[] item_List;
         public ItemObject Item;
 
@@ -189,7 +200,7 @@ namespace StarterAssets
             if (!IsSpawned) return;
 
             _hasAnimator = TryGetComponent(out _animator);
-            if (in_action == false)
+            if (in_action.Value == false)
             {
                 GroundedCheck(); // 클라든 서버든 체크 가능
 
@@ -207,13 +218,20 @@ namespace StarterAssets
                     _input.sprint = _serverInputSprint;
                     JumpAndGravity(); // 이 부분도 서버만 처리해야 함
                     Move();
-                    if (equip && UnityEngine.Input.GetKeyDown(KeyCode.F))
+          
+                }
+
+                if(IsOwner && !_isStun && equip.Value)
+                {
+                    if (UnityEngine.Input.GetKeyDown(KeyCode.F))
                     {
                         Debug.Log("f입력");
                         ShootiongaAnimation();
                     }
                 }
             }
+            Debug.Log(_isStun);
+            
         }
         public override void OnNetworkSpawn()
         {
@@ -501,12 +519,19 @@ namespace StarterAssets
         /// </summary>
         public void ShootiongaAnimation()
         {
-            if(equip == true)
+            if (equip.Value == true)
             {
-                in_action = true;
-                _animator.SetBool("Shooting", true);
+                RequestStartActionServerRpc();
             }
         }
+        /// 발사애니메이션 RPC
+        [ServerRpc]
+        private void RequestStartActionServerRpc()
+        {
+            in_action.Value = true;
+            _animator.SetBool("Shooting", true);
+        }
+
 
         /// <summary>
         /// 스턴 작용
@@ -514,9 +539,9 @@ namespace StarterAssets
         public void stunON()
         {
             _isStun = true;
-            Debug.Log("스턴걸림");
             StartCoroutine(StunTimer());
-
+            if(IsOwner)
+            Debug.Log("스턴걸림");
         }
 
         /// <summary>
@@ -526,7 +551,8 @@ namespace StarterAssets
         private IEnumerator StunTimer()
         {
             yield return new WaitForSeconds(3f);
-            Debug.Log("스턴풀림");
+            if (IsOwner)
+                Debug.Log("스턴풀림");
             _isStun = false;
         }
 
@@ -534,27 +560,54 @@ namespace StarterAssets
         // 탄환 발사
         private void Shoot()
         {
-            Quaternion fireRotation = Quaternion.LookRotation(Camera.main.transform.forward);
+            if (!IsOwner) return;
+            Vector3 shootDir = Camera.main.transform.forward;
+            ShootServerRpc(shootDir);
+        }
+        /// <summary>
+        /// 총 생성 RPC
+        /// </summary>
+        [ServerRpc(RequireOwnership = false)]
+        void ShootServerRpc(Vector3 shootDir)
+        {
+            Quaternion fireRotation = Quaternion.LookRotation(shootDir);
             fireRotation.z = 0;
             fireRotation.x = 0;
+
             GameObject itemObj = Instantiate(item_List[0], righthandTransform.position, fireRotation);
             var netObj = itemObj.GetComponent<NetworkObject>();
             netObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             netObj.Spawn(true);
+
             Item = netObj.GetComponent<ItemObject>();
-            Item.Fire();
+            Item.FireServerRpc(shootDir);
         }
+
 
 
         // 테이져건 종료
         private void ShootingOff()
         {
-            in_action = false;
-            equip = false;
-            _animator.SetBool("Shooting", false);
-            Destroy(Item.gameObject);
-            Item = null;
+            if (!IsOwner) return;
+            ShootingOffServerRpc();
         }
+
+        /// <summary>
+        ///  테이져건 종료 RPC
+        /// </summary>
+        /// <param name="animationEvent"></param>
+        [ServerRpc]
+        void ShootingOffServerRpc()
+        {
+     
+                in_action.Value = false;
+                equip.Value = false;
+                _animator.SetBool("Shooting", false);
+                Item.gameObject.GetComponent<NetworkObject>().Despawn();
+                Item = null;
+        }
+
+
 
         //발소리
         private void OnFootstep(AnimationEvent animationEvent)

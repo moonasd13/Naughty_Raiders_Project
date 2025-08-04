@@ -62,18 +62,18 @@ public class RoomItemBox : NetworkBehaviour
         if (_playerController == null || _playerController.OwnerClientId != clientId)
             return;
 
-        if (_playerController.inHand)
+        if (_playerController.inHand.Value)
         {
-            _playerController.inHand = false;
+            _playerController.inHand.Value = false;
             boxCount.Value++;
 
             // °ρµε Αυ°΅ Γ³Έ®
             int reward = rewardPerBox;
             SendGoldToClientRpc(clientId, reward);
         }
-        else if (!_playerController.inHand && boxCount.Value > 0)
+        else if (!_playerController.inHand.Value && boxCount.Value > 0)
         {
-            _playerController.inHand = true;
+            _playerController.inHand.Value = true;
             boxCount.Value--;
         }
     }

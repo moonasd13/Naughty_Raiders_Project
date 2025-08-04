@@ -43,7 +43,7 @@ public class ItemObject : NetworkBehaviour
 
     private void Update()
     {
-        if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.equip == false)
+        if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.equip.Value == false)
         {
             RequestPickupServerRpc(NetworkManager.LocalClientId);
         }
@@ -68,17 +68,6 @@ public class ItemObject : NetworkBehaviour
     }
 
     /// <summary>
-    /// 발사
-    /// </summary>
-    public void Fire()
-    {
-        Vector3 shootDir = Camera.main.transform.forward;
-        FireServerRpc(shootDir);
-    }
-
-
-
-    /// <summary>
     /// 서버에게 실질적으로 수행해야하는 RPC전송
     /// </summary>
     /// <param name="requestingClientId"></param>
@@ -88,10 +77,10 @@ public class ItemObject : NetworkBehaviour
         if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
             return;
 
-        if (_firstPlayerController.equip || !_isPlayerInZone)
+        if (_firstPlayerController.equip.Value || !_isPlayerInZone)
             return;
 
-        _firstPlayerController.equip = true;
-        Destroy(this.gameObject);
+        _firstPlayerController.equip.Value = true;
+        GetComponent<NetworkObject>().Despawn(true);
     }
 }

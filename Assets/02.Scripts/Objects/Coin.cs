@@ -1,5 +1,6 @@
 using StarterAssets;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Coin : NetworkBehaviour
@@ -40,7 +41,7 @@ public class Coin : NetworkBehaviour
     private void Update()
     {
         // 물건을 잡을수 있는 조건
-        if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.inHand == false)
+        if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.inHand.Value == false)
         {
             RequestPickupServerRpc(NetworkManager.LocalClientId);
         }
@@ -56,11 +57,11 @@ public class Coin : NetworkBehaviour
         if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
             return;
 
-        if (_firstPlayerController.inHand || !_isPlayerInZone)
+        if (_firstPlayerController.inHand.Value || !_isPlayerInZone)
             return;
 
-        _firstPlayerController.inHand = true;
+        _firstPlayerController.inHand.Value = true;
 
-        Destroy(this.gameObject);
+        GetComponent<NetworkObject>().Despawn(true);
     }
 }
