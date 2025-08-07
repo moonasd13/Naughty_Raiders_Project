@@ -199,40 +199,39 @@ namespace StarterAssets
         {
             if (!IsSpawned) return;
 
-            _hasAnimator = TryGetComponent(out _animator);
-            if (in_action.Value == false)
-            {
-                GroundedCheck(); // 클라든 서버든 체크 가능
+            if (!_hasAnimator)
+                _hasAnimator = TryGetComponent(out _animator);
 
-                if (IsOwner && IsClient)
+            if (in_action.Value) return;
+
+            GroundedCheck();
+
+            // Owner 전용 처리
+            if (IsOwner)
+            {
+                if (IsClient)
                 {
                     MoveServerRpc(_input.move, _input.sprint, _input.jump);
-                    // 점프 입력은 한 번만 보내고 클라이언트에서 즉시 false로 리셋
                     _input.jump = false;
                 }
 
-                if (IsServer && !_isStun)
-                {
-                    // 서버만 실제로 움직임 실행
-                    _input.move = _serverInputMove;
-                    _input.sprint = _serverInputSprint;
-                    JumpAndGravity(); // 이 부분도 서버만 처리해야 함
-                    Move();
-          
-                }
+                if (!_isStun && equip.Value && UnityEngine.Input.GetKeyDown(KeyCode.F))
+                    ShootiongaAnimation();
 
-                if(IsOwner && !_isStun && equip.Value)
-                {
-                    if (UnityEngine.Input.GetKeyDown(KeyCode.F))
-                    {
-                        Debug.Log("f입력");
-                        ShootiongaAnimation();
-                    }
-                }
+                if (!_isStun && UnityEngine.Input.GetKeyDown(KeyCode.E))
+                    TryInteractWithNearbyBox();
             }
-            Debug.Log(_isStun);
-            
+
+            // Server 전용 처리
+            if (IsServer && !_isStun)
+            {
+                _input.move = _serverInputMove;
+                _input.sprint = _serverInputSprint;
+                JumpAndGravity();
+                Move();
+            }
         }
+
         public override void OnNetworkSpawn()
         {
             if (IsOwner)
@@ -532,7 +531,6 @@ namespace StarterAssets
             _animator.SetBool("Shooting", true);
         }
 
-
         /// <summary>
         /// 스턴 작용
         /// </summary>
@@ -556,6 +554,23 @@ namespace StarterAssets
             _isStun = false;
         }
 
+
+        /// <summary>
+        /// 레이케스트를 이용한 상자찾기, 상자 상호작용
+        /// </summary>
+        private void TryInteractWithNearbyBox()
+        {
+            Collider[] hits = Physics.OverlapSphere(transform.position, 2.5f); // 범위 내 상자 찾기
+            foreach (var hit in hits)
+            {
+                RoomItemBox box = hit.GetComponent<RoomItemBox>();
+                if (box != null)
+                {
+                    box.SubmitInteractServerRpc(OwnerClientId);
+                    break;
+                }
+            }
+        }
         #region[애니메이션 이벤트]
         // 탄환 발사
         private void Shoot()

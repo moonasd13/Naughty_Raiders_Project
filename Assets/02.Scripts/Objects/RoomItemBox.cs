@@ -1,4 +1,5 @@
 using StarterAssets;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,27 +8,25 @@ public class RoomItemBox : NetworkBehaviour
     [SerializeField]
     public BoxCollider RoomArea;
     public GameObject ScoreObject;
+
     [Header("정보")]
     public NetworkVariable<int> boxCount = new NetworkVariable<int>(0);
-    //[SerializeField] public int boxCount { get; set; } = 0;
-
-    private bool _isPlayerInZone = false;
-    private PlayerController _playerController;
-
     [SerializeField] private int rewardPerBox = 10;
+
+    // 현재 범위 안에 있는 플레이어 목록
+    private readonly Dictionary<ulong, PlayerController> playersInZone = new();
 
     private void OnTriggerEnter(Collider other)
     {
         if (!IsServer) return;
 
         if (other.CompareTag("Player"))
-        {            
+        {
             PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller != null)
+            if (controller != null && !playersInZone.ContainsKey(controller.OwnerClientId))
             {
-                _isPlayerInZone = true;
-                _playerController = controller;
-            }            
+                playersInZone.Add(controller.OwnerClientId, controller);
+            }
         }
     }
 
@@ -38,42 +37,31 @@ public class RoomItemBox : NetworkBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller == _playerController)
+            if (controller != null && playersInZone.ContainsKey(controller.OwnerClientId))
             {
-                _isPlayerInZone = false;
-                _playerController = null;
+                playersInZone.Remove(controller.OwnerClientId);
             }
         }
     }
 
-    private void Update()
-    {
-        if (!IsOwner) return;
-
-        if (_isPlayerInZone && Input.GetKeyDown(KeyCode.E))
-        {
-            SubmitInteractServerRpc(NetworkManager.LocalClientId);
-        }
-    }
-
     [ServerRpc(RequireOwnership = false)]
-    private void SubmitInteractServerRpc(ulong clientId)
+    public void SubmitInteractServerRpc(ulong clientId)
     {
-        if (_playerController == null || _playerController.OwnerClientId != clientId)
-            return;
+        if (!playersInZone.ContainsKey(clientId)) return;
 
-        if (_playerController.inHand.Value)
+        PlayerController controller = playersInZone[clientId];
+
+        if (controller == null) return;
+
+        if (controller.inHand.Value)
         {
-            _playerController.inHand.Value = false;
+            controller.inHand.Value = false;
             boxCount.Value++;
-
-            // 골드 증가 처리
-            int reward = rewardPerBox;
-            SendGoldToClientRpc(clientId, reward);
+            SendGoldToClientRpc(clientId, rewardPerBox);
         }
-        else if (!_playerController.inHand.Value && boxCount.Value > 0)
+        else if (!controller.inHand.Value && boxCount.Value > 0)
         {
-            _playerController.inHand.Value = true;
+            controller.inHand.Value = true;
             boxCount.Value--;
         }
     }
