@@ -12,6 +12,14 @@ public class Bullet : NetworkBehaviour
     public float rayDistance = 0.5f;
     public float moveSpeed;
 
+    private void Start()
+    {
+        if (IsServer)
+        {
+            Invoke(nameof(DespawnBullet), 8f);
+        }
+    }
+
     public void SetDirection(Vector3 direction)
     {
         moveDirection = direction.normalized;
@@ -26,15 +34,11 @@ public class Bullet : NetworkBehaviour
         {
             if (hit.collider.CompareTag("Wall"))
             {
-                // º®¿¡ ºÎµúÈû
-                Debug.Log("º® Ãæµ¹ ¡æ ÆÄ±«µÊ");
-                GetComponent<NetworkObject>().Despawn(true);
+                DespawnBullet();
                 return;
             }
         }
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
-
-        Debug.Log("ÅºÈ¯");
     }
 
     private void OnTriggerEnter(Collider other)
@@ -48,10 +52,17 @@ public class Bullet : NetworkBehaviour
             {
                 _firstPlayerController = controller;
                 _firstPlayerController.stunON();
-                Debug.Log(other + "¸íÁß");
             }
         }
 
-        GetComponent<NetworkObject>().Despawn(true);
+        DespawnBullet();
+    }
+
+    private void DespawnBullet()
+    {
+        if (IsServer && gameObject.activeInHierarchy)
+        {
+            GetComponent<NetworkObject>().Despawn(true);
+        }
     }
 }

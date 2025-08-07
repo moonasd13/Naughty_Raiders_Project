@@ -577,6 +577,8 @@ namespace StarterAssets
         {
             if (!IsOwner) return;
             Vector3 shootDir = Camera.main.transform.forward;
+            shootDir.y = 0;
+            shootDir.Normalize();
             ShootServerRpc(shootDir);
         }
         /// <summary>
@@ -586,8 +588,6 @@ namespace StarterAssets
         void ShootServerRpc(Vector3 shootDir)
         {
             Quaternion fireRotation = Quaternion.LookRotation(shootDir);
-            fireRotation.z = 0;
-            fireRotation.x = 0;
 
             GameObject itemObj = Instantiate(item_List[0], righthandTransform.position, fireRotation);
             var netObj = itemObj.GetComponent<NetworkObject>();

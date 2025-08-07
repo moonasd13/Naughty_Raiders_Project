@@ -5125,8 +5125,8 @@ MonoBehaviour:
   - {fileID: 6542153327835142291, guid: 47340b6f31cc54a4098c466b964ff58f, type: 3}
   parentTransform: {fileID: 903945736}
   SpawnPoses: {fileID: 625877415}
-  CoinCount: 150
-  ItemCount: 10
+  CoinCount: 5
+  ItemCount: 110
 --- !u!1 &610193311
 GameObject:
   m_ObjectHideFlags: 0
@@ -17866,7 +17866,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1949450022
 RectTransform:
   m_ObjectHideFlags: 0
