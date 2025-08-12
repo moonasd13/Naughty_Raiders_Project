@@ -998,8 +998,12 @@ MonoBehaviour:
   LockCameraPosition: 0
   righthandTransform: {fileID: 2984970416062854485}
   lefthandTransform: {fileID: 982141027165598653}
-  equip: 0
-  inHand: 0
+  equip:
+    m_InternalValue: 0
+  inHand:
+    m_InternalValue: 0
+  in_action:
+    m_InternalValue: 0
   item_List:
   - {fileID: 6542153327835142291, guid: 47340b6f31cc54a4098c466b964ff58f, type: 3}
   Item: {fileID: 7995518799640152259, guid: 47340b6f31cc54a4098c466b964ff58f, type: 3}
@@ -2272,6 +2276,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3327467929759041338}
   - component: {fileID: 5430455884578156177}
+  - component: {fileID: 3213864645733050269}
   m_Layer: 7
   m_Name: Player01
   m_TagString: Player
@@ -2321,6 +2326,19 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &3213864645733050269
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7606017032670939103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef6a09b3c2c543346b95bb294aa6bed2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &7817243373240972138
 GameObject:
   m_ObjectHideFlags: 0
