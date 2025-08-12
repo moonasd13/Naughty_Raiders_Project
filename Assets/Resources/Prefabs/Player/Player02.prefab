@@ -1423,8 +1423,14 @@ MonoBehaviour:
   LockCameraPosition: 0
   righthandTransform: {fileID: 3062158653543614791}
   lefthandTransform: {fileID: 1661949077037546204}
-  equip: 0
-  inHand: 0
+  equip:
+    m_InternalValue: 0
+  inHand:
+    m_InternalValue: 0
+  in_action:
+    m_InternalValue: 0
+  item_List: []
+  Item: {fileID: 0}
   cinemachine_CM: {fileID: 3250967842722467537}
 --- !u!114 &7809954582285610385
 MonoBehaviour:
