@@ -2,6 +2,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
+using Define_Enums;
 using UnityEngine.Windows;
 using UnityEngine.Rendering.Universal;
 using Unity.Netcode.Components;
@@ -24,10 +25,16 @@ namespace StarterAssets
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
-        public float MoveSpeed = 2.0f;
+        public NetworkVariable<float> MoveSpeed = new NetworkVariable<float>(
+        2.0f,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
 
         [Tooltip("Sprint speed of the character in m/s")]
-        public float SprintSpeed = 5.335f;
+        public NetworkVariable<float> SprintSpeed = new NetworkVariable<float>(
+        5.335f,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -104,6 +111,7 @@ namespace StarterAssets
            NetworkVariableWritePermission.Server);
         public GameObject[] item_List;
         public ItemObject Item;
+        public ItemKind my_ItemKind;
 
         // cinemachine
         [SerializeField] public GameObject cinemachine_CM;
@@ -137,6 +145,9 @@ namespace StarterAssets
         private GameObject _mainCamera;
 
         private const float _threshold = 0.01f;
+        // 코루틴용 원래 스피드 저장변수
+        private float _defaultMoveSpeed;
+        private float _defaultSprintSpeed;
         // 서버에 보낼값
         private Vector2 _serverInputMove;
         private bool _serverInputSprint;
@@ -216,7 +227,18 @@ namespace StarterAssets
                 }
 
                 if (!_isStun && equip.Value && UnityEngine.Input.GetKeyDown(KeyCode.F))
-                    ShootiongaAnimation();
+                {
+                    switch (my_ItemKind)
+                    {
+                        case ItemKind.Gun: ShootiongaAnimation(); break;
+
+                        case ItemKind.Speed: UseSpeedItem(1.3f); break;
+
+                        default:
+                            return;
+                    }
+                }
+                   
 
                 if (!_isStun && UnityEngine.Input.GetKeyDown(KeyCode.E))
                     TryInteractWithNearbyBox();
@@ -342,7 +364,7 @@ namespace StarterAssets
         {
             DebugUIManager.Instance?.Log("Move() called by: " + OwnerClientId);
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+            float targetSpeed = _input.sprint ? SprintSpeed.Value : MoveSpeed.Value;
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -514,24 +536,6 @@ namespace StarterAssets
         }
 
         /// <summary>
-        /// 테이져건 발사
-        /// </summary>
-        public void ShootiongaAnimation()
-        {
-            if (equip.Value == true)
-            {
-                RequestStartActionServerRpc();
-            }
-        }
-        /// 발사애니메이션 RPC
-        [ServerRpc]
-        private void RequestStartActionServerRpc()
-        {
-            in_action.Value = true;
-            _animator.SetBool("Shooting", true);
-        }
-
-        /// <summary>
         /// 스턴 작용
         /// </summary>
         public void stunON()
@@ -554,7 +558,6 @@ namespace StarterAssets
             _isStun = false;
         }
 
-
         /// <summary>
         /// 레이케스트를 이용한 상자찾기, 상자 상호작용
         /// </summary>
@@ -571,6 +574,52 @@ namespace StarterAssets
                 }
             }
         }
+
+        /// <summary>
+        /// 아이템 종류값 받아오기
+        /// </summary>
+        public void GetItemKind(ItemKind itemKind)
+        {
+            my_ItemKind = itemKind;
+        }
+
+        /// <summary>
+        /// 스피드 아이템 사용
+        /// </summary>
+        /// <param name="speedIncrease"></param>
+        public void UseSpeedItem(float speedIncrease)
+        {
+            if (equip.Value)
+            {
+                RequestChangeSpeedServerRpc(speedIncrease);
+            }
+        }
+
+        /// <summary>
+        /// 스피드 아이템 사용 RPC
+        /// </summary>
+        /// <param name="speedIncrease"></param>
+        [ServerRpc]
+        private void RequestChangeSpeedServerRpc(float speedIncrease)
+        {
+            _defaultMoveSpeed = MoveSpeed.Value;
+            _defaultSprintSpeed = SprintSpeed.Value;
+
+            MoveSpeed.Value *= speedIncrease;
+            SprintSpeed.Value *= speedIncrease;
+
+            StartCoroutine(RevertSpeedAfterDelay(10f));
+        }
+
+        // 속도 복구용 코루틴
+        private IEnumerator RevertSpeedAfterDelay(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            MoveSpeed.Value = _defaultMoveSpeed;
+            SprintSpeed.Value = _defaultSprintSpeed;
+        }
+
         #region[애니메이션 이벤트]
         // 탄환 발사
         private void Shoot()
@@ -598,7 +647,23 @@ namespace StarterAssets
             Item.FireServerRpc(shootDir);
         }
 
-
+        /// <summary>
+        /// 테이져건 발사
+        /// </summary>
+        public void ShootiongaAnimation()
+        {
+            if (equip.Value == true)
+            {
+                RequestStartActionServerRpc();
+            }
+        }
+        /// 발사애니메이션 RPC
+        [ServerRpc]
+        private void RequestStartActionServerRpc()
+        {
+            in_action.Value = true;
+            _animator.SetBool("Shooting", true);
+        }
 
         // 테이져건 종료
         private void ShootingOff()

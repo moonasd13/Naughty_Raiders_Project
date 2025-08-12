@@ -74,8 +74,6 @@ public class ItemSpawner : NetworkBehaviour
             netObj.Spawn(true);
             netObj.TrySetParent(parentNetworkObject);
         }
-
-
     }
     private void ShuffleList<T>(List<T> list)
     {
