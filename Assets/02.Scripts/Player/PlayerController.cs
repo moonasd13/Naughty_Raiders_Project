@@ -112,6 +112,7 @@ namespace StarterAssets
         public GameObject[] item_List;
         public ItemObject Item;
         public NetworkVariable<ItemKind> my_ItemKind = new NetworkVariable<ItemKind>(ItemKind.None);
+        public NetworkVariable<bool> hide = new NetworkVariable<bool>(false);
 
         // cinemachine
         [SerializeField] public GameObject cinemachine_CM;
@@ -220,7 +221,6 @@ namespace StarterAssets
             // Owner 전용 처리
             if (IsOwner)
             {
-                Debug.LogFormat("{0}", equip.Value);
                 if (IsClient)
                 {
                     MoveServerRpc(_input.move, _input.sprint, _input.jump);
@@ -229,14 +229,11 @@ namespace StarterAssets
 
                 if (!_isStun && equip.Value && UnityEngine.Input.GetKeyDown(KeyCode.F))
                 {
-                    Debug.Log("F 입력");
                     switch (my_ItemKind.Value)
                     {
-                        case ItemKind.Gun: ShootiongaAnimation();
-                            Debug.Log("총 입력"); break;
+                        case ItemKind.Gun: ShootiongaAnimation(); break;
 
-                        case ItemKind.Speed: UseSpeedItem(1.3f);
-                            Debug.Log("속도 입력"); break;
+                        case ItemKind.Speed: UseSpeedItem(1.3f); break;
 
                         default:
                             return;
@@ -571,11 +568,20 @@ namespace StarterAssets
             foreach (var hit in hits)
             {
                 RoomItemBox box = hit.GetComponent<RoomItemBox>();
+                Obj_Cabinet cabinet = hit.GetComponent<Obj_Cabinet>();
                 if (box != null)
                 {
                     box.SubmitInteractServerRpc(OwnerClientId);
                     break;
                 }
+
+                if (cabinet != null)
+                {
+                    cabinet.Interact(this);
+                    break;
+                }
+
+
             }
         }
 
