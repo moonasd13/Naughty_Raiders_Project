@@ -9,6 +9,8 @@ TagManager:
   - PlayerCamera
   - Prison
   - Wall
+  - Item_Gun
+  - Item_Speed
   layers:
   - Default
   - TransparentFX

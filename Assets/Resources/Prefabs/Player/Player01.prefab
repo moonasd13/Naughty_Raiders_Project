@@ -1006,6 +1006,7 @@ MonoBehaviour:
     m_InternalValue: 0
   item_List:
   - {fileID: 6542153327835142291, guid: 47340b6f31cc54a4098c466b964ff58f, type: 3}
+  - {fileID: 6542153327835142291, guid: 47340b6f31cc54a4098c466b964ff58f, type: 3}
   Item: {fileID: 7995518799640152259, guid: 47340b6f31cc54a4098c466b964ff58f, type: 3}
   cinemachine_CM: {fileID: 4537525817153230375}
 --- !u!114 &5596225311696598629

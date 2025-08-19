@@ -2,6 +2,7 @@ using StarterAssets;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
+using Define_Enums;
 
 public class ItemObject : NetworkBehaviour
 {
@@ -11,10 +12,27 @@ public class ItemObject : NetworkBehaviour
     public GameObject bullet;
     public Transform bulletPos;
 
-
+    ItemKind item_kind;
     Bullet codebullet;
     private bool _isPlayerInZone = false;
     private PlayerController _firstPlayerController;
+
+    private void Start()
+    {
+        if(this.CompareTag("Item_Gun"))
+        {
+            item_kind = ItemKind.Gun;
+        }
+        else if (this.CompareTag("Item_Speed"))
+        {
+            item_kind = ItemKind.Speed;
+        }
+        else
+        {
+            Debug.Log("아이템 태그 없음");
+        }
+
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -81,6 +99,7 @@ public class ItemObject : NetworkBehaviour
             return;
 
         _firstPlayerController.equip.Value = true;
+        _firstPlayerController.GetItemKind(item_kind);
         GetComponent<NetworkObject>().Despawn(true);
     }
 }

@@ -8,6 +8,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private List<Transform> spawnPoints; // 인스펙터에서 1, 2, 3, 4 위치 넣기
 
+
     private void Awake()
     {
         if (Instance == null)
