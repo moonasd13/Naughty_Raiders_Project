@@ -111,7 +111,7 @@ namespace StarterAssets
            NetworkVariableWritePermission.Server);
         public GameObject[] item_List;
         public ItemObject Item;
-        public ItemKind my_ItemKind;
+        public NetworkVariable<ItemKind> my_ItemKind = new NetworkVariable<ItemKind>(ItemKind.None);
 
         // cinemachine
         [SerializeField] public GameObject cinemachine_CM;
@@ -220,6 +220,7 @@ namespace StarterAssets
             // Owner 전용 처리
             if (IsOwner)
             {
+                Debug.LogFormat("{0}", equip.Value);
                 if (IsClient)
                 {
                     MoveServerRpc(_input.move, _input.sprint, _input.jump);
@@ -228,11 +229,14 @@ namespace StarterAssets
 
                 if (!_isStun && equip.Value && UnityEngine.Input.GetKeyDown(KeyCode.F))
                 {
-                    switch (my_ItemKind)
+                    Debug.Log("F 입력");
+                    switch (my_ItemKind.Value)
                     {
-                        case ItemKind.Gun: ShootiongaAnimation(); break;
+                        case ItemKind.Gun: ShootiongaAnimation();
+                            Debug.Log("총 입력"); break;
 
-                        case ItemKind.Speed: UseSpeedItem(1.3f); break;
+                        case ItemKind.Speed: UseSpeedItem(1.3f);
+                            Debug.Log("속도 입력"); break;
 
                         default:
                             return;
@@ -580,7 +584,7 @@ namespace StarterAssets
         /// </summary>
         public void GetItemKind(ItemKind itemKind)
         {
-            my_ItemKind = itemKind;
+            my_ItemKind.Value = itemKind;
         }
 
         /// <summary>
@@ -599,7 +603,7 @@ namespace StarterAssets
         /// 스피드 아이템 사용 RPC
         /// </summary>
         /// <param name="speedIncrease"></param>
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void RequestChangeSpeedServerRpc(float speedIncrease)
         {
             _defaultMoveSpeed = MoveSpeed.Value;
@@ -607,6 +611,7 @@ namespace StarterAssets
 
             MoveSpeed.Value *= speedIncrease;
             SprintSpeed.Value *= speedIncrease;
+            Debug.LogFormat("{0}, {1}", MoveSpeed.Value, SprintSpeed.Value);
 
             StartCoroutine(RevertSpeedAfterDelay(10f));
         }
@@ -618,6 +623,9 @@ namespace StarterAssets
 
             MoveSpeed.Value = _defaultMoveSpeed;
             SprintSpeed.Value = _defaultSprintSpeed;
+            equip.Value = false;
+            Debug.LogFormat("{0}, {1}, {2}", MoveSpeed.Value, SprintSpeed.Value, equip.Value);
+
         }
 
         #region[애니메이션 이벤트]
@@ -643,8 +651,8 @@ namespace StarterAssets
             netObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             netObj.Spawn(true);
 
-            Item = netObj.GetComponent<ItemObject>();
-            Item.FireServerRpc(shootDir);
+            Item = netObj.GetComponent<Item_Gun>();
+            Item.UseServerRpc(shootDir);
         }
 
         /// <summary>
@@ -686,8 +694,6 @@ namespace StarterAssets
                 Item.gameObject.GetComponent<NetworkObject>().Despawn();
                 Item = null;
         }
-
-
 
         //발소리
         private void OnFootstep(AnimationEvent animationEvent)

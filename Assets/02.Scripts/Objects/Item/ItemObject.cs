@@ -8,10 +8,7 @@ public class ItemObject : NetworkBehaviour
 {
     [SerializeField]
     public Collider _senseZone;
-    [SerializeField]
-    public GameObject bullet;
-    public Transform bulletPos;
-
+    
     ItemKind item_kind;
     Bullet codebullet;
     private bool _isPlayerInZone = false;
@@ -68,24 +65,6 @@ public class ItemObject : NetworkBehaviour
     }
 
     /// <summary>
-    /// 탄환 RPC
-    /// </summary>
-    /// <param name="direction"></param>
-    [ServerRpc]
-    public void FireServerRpc(Vector3 direction)
-    {
-        Vector3 pos = bulletPos.transform.position;
-        Quaternion fireRotation = Quaternion.LookRotation(direction);
-
-        GameObject itemObj = Instantiate(bullet, pos, fireRotation);
-        var netObj = itemObj.GetComponent<NetworkObject>();
-        netObj.Spawn(true);
-
-        Bullet codebullet = netObj.GetComponent<Bullet>();
-        codebullet.SetDirection(direction);
-    }
-
-    /// <summary>
     /// 서버에게 실질적으로 수행해야하는 RPC전송
     /// </summary>
     /// <param name="requestingClientId"></param>
@@ -102,4 +81,17 @@ public class ItemObject : NetworkBehaviour
         _firstPlayerController.GetItemKind(item_kind);
         GetComponent<NetworkObject>().Despawn(true);
     }
+
+
+    /// <summary>
+    /// 자식에게 상속
+    /// </summary>
+    /// <param name="direction"></param>
+    [ServerRpc]
+    public virtual void UseServerRpc(Vector3 direction)
+    {
+        Debug.Log("부모 아이템은 기본 사용 기능 없음");
+    }
+
+
 }
