@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: ed5167c17fe2bd143965a65a99e321f8
+AssetOrigin:
+  serializedVersion: 1
+  productId: 319018
+  packageName: Free Modular 3D Platformer Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/HaniJahanDesign/FreePack/Models/HJD_FP_ground00.fbx
+  uploadId: 757106
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -16,8 +23,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -35,7 +40,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 50
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -90,7 +95,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 0.5
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
@@ -107,10 +112,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 319018
-  packageName: Free Modular 3D Platformer Pack
-  packageVersion: 1.0.0
-  assetPath: Assets/HaniJahanDesign/FreePack/Models/HJD_FP_ground00.fbx
-  uploadId: 757106

@@ -1,5 +1,12 @@
 fileFormatVersion: 2
 guid: c0bc74af57227e24e82401a936ba6f8c
+AssetOrigin:
+  serializedVersion: 1
+  productId: 319018
+  packageName: Free Modular 3D Platformer Pack
+  packageVersion: 1.0.0
+  assetPath: Assets/HaniJahanDesign/FreePack/Models/HJD_FP_button00.fbx
+  uploadId: 757106
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -16,8 +23,6 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
-    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
@@ -90,7 +95,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 0.01
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
@@ -107,10 +112,3 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 319018
-  packageName: Free Modular 3D Platformer Pack
-  packageVersion: 1.0.0
-  assetPath: Assets/HaniJahanDesign/FreePack/Models/HJD_FP_button00.fbx
-  uploadId: 757106

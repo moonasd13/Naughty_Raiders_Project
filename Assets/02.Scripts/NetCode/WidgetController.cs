@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class WidgetController : MonoBehaviour
 {
-    private const string TargetSceneName = "NetCodeTestScene2";
+    private const string TargetSceneName = "02_InGame";
     public void SceneChange()
     {
         SceneManager.LoadScene(TargetSceneName);
