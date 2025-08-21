@@ -221,7 +221,7 @@ namespace StarterAssets
             // Owner 전용 처리
             if (IsOwner)
             {
-                if (IsClient)
+                if (IsClient && hide.Value == false)
                 {
                     MoveServerRpc(_input.move, _input.sprint, _input.jump);
                     _input.jump = false;
@@ -614,6 +614,7 @@ namespace StarterAssets
         {
             _defaultMoveSpeed = MoveSpeed.Value;
             _defaultSprintSpeed = SprintSpeed.Value;
+            equip.Value = false;
 
             MoveSpeed.Value *= speedIncrease;
             SprintSpeed.Value *= speedIncrease;
@@ -629,7 +630,6 @@ namespace StarterAssets
 
             MoveSpeed.Value = _defaultMoveSpeed;
             SprintSpeed.Value = _defaultSprintSpeed;
-            equip.Value = false;
             Debug.LogFormat("{0}, {1}, {2}", MoveSpeed.Value, SprintSpeed.Value, equip.Value);
 
         }
