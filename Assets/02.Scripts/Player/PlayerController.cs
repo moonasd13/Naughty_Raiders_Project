@@ -177,6 +177,8 @@ namespace StarterAssets
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
+
+            hide.OnValueChanged += OnHideChanged;
         }
 
         private void Start()
@@ -209,6 +211,9 @@ namespace StarterAssets
 
         private void Update()
         {
+            Debug.Log($"IsServer: {IsServer}, IsClient: {IsClient}, IsHost: {IsHost}");
+
+
             if (!IsSpawned) return;
 
             if (!_hasAnimator)
@@ -543,8 +548,6 @@ namespace StarterAssets
         {
             _isStun = true;
             StartCoroutine(StunTimer());
-            if(IsOwner)
-            Debug.Log("스턴걸림");
         }
 
         /// <summary>
@@ -554,8 +557,6 @@ namespace StarterAssets
         private IEnumerator StunTimer()
         {
             yield return new WaitForSeconds(3f);
-            if (IsOwner)
-                Debug.Log("스턴풀림");
             _isStun = false;
         }
 
@@ -580,8 +581,6 @@ namespace StarterAssets
                     cabinet.Interact(this);
                     break;
                 }
-
-
             }
         }
 
@@ -618,7 +617,6 @@ namespace StarterAssets
 
             MoveSpeed.Value *= speedIncrease;
             SprintSpeed.Value *= speedIncrease;
-            Debug.LogFormat("{0}, {1}", MoveSpeed.Value, SprintSpeed.Value);
 
             StartCoroutine(RevertSpeedAfterDelay(10f));
         }
@@ -630,7 +628,6 @@ namespace StarterAssets
 
             MoveSpeed.Value = _defaultMoveSpeed;
             SprintSpeed.Value = _defaultSprintSpeed;
-            Debug.LogFormat("{0}, {1}, {2}", MoveSpeed.Value, SprintSpeed.Value, equip.Value);
 
         }
 
@@ -723,5 +720,27 @@ namespace StarterAssets
             }
         }
         #endregion
+
+
+        /// 하이드 벨류가 변경될시 자동으로 렌더러와 콜라이더를 끄고 킨다.
+        private void OnHideChanged(bool oldValue, bool newValue)
+        {
+            if (newValue) // 숨김 처리
+            {
+                foreach (var renderer in GetComponentsInChildren<Renderer>())
+                    renderer.enabled = false;
+                foreach (var collider in GetComponentsInChildren<Collider>())
+                    collider.enabled = false;
+
+            }
+            else // 보임 처리
+            {
+                foreach (var renderer in GetComponentsInChildren<Renderer>())
+                    renderer.enabled = true;
+                foreach (var collider in GetComponentsInChildren<Collider>())
+                    collider.enabled = true;
+
+            }
+        }
     }
 }
