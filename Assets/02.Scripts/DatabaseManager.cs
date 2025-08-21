@@ -94,4 +94,38 @@ public class DatabaseManager : MonoBehaviour
                 Debug.LogError("Gold 저장 실패: " + task.Exception);
         });
     }
+
+    public void ResetAllPlayersGold()       //플레이어 골드 데이터 초기화
+    {
+        m_databaseRef.Child("users").GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                foreach (var child in task.Result.Children)
+                {
+                    string userId = child.Key;
+                    m_databaseRef.Child("users").Child(userId).Child("Gold").SetValueAsync(0);
+                }
+            }
+        });
+    }
+
+    public void LoadAllPlayersData()        //플레이어 데이터 불러오기
+    {
+        m_databaseRef.Child("users").GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                int index = 0;
+                foreach (var child in task.Result.Children)
+                {
+                    string nick = child.Child("Nickname").Value?.ToString() ?? "NoName";
+                    int gold = int.Parse(child.Child("Gold").Value?.ToString() ?? "0");
+
+                    m_gameUI.UpdatePlayerUI(index, nick, gold);
+                    index++;
+                }
+            }
+        });
+    }
 }
