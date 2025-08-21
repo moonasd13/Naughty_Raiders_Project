@@ -17,6 +17,8 @@ public class AuthManager : MonoBehaviour
     [SerializeField]
     MainSceneUI m_MainUI;
 
+    public string CurrentNickname { get; private set; }
+
     #region UnityMethod
     void Awake()
     {
@@ -75,6 +77,8 @@ public class AuthManager : MonoBehaviour
                 Debug.Log("로그인 성공: " + user.UserId);
                 InitUserData(user.UserId);
 
+                LoginSuccess();
+
                 LoadScene();
             }
             else
@@ -116,6 +120,7 @@ public class AuthManager : MonoBehaviour
                 if(task.Result.Exists)
                 {
                     string nickname = task.Result.Value.ToString();
+                    CurrentNickname = nickname;
                     Debug.Log("닉네임 존재함: " + nickname);
                 }
                 else
@@ -141,6 +146,7 @@ public class AuthManager : MonoBehaviour
             {
                 if (task.IsCompletedSuccessfully)
                 {
+                    CurrentNickname = nickname;
                     Debug.Log("닉네임 저장");
                 }
                 else
