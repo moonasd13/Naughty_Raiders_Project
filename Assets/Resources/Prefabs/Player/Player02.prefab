@@ -1388,10 +1388,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  MoveSpeed:
-    m_InternalValue: 2
-  SprintSpeed:
-    m_InternalValue: 5.335
+  MoveSpeed: 2
+  SprintSpeed: 5.335
   RotationSmoothTime: 0.12
   RotationSpeed: 1
   SpeedChangeRate: 10
@@ -1433,10 +1431,6 @@ MonoBehaviour:
     m_InternalValue: 0
   item_List: []
   Item: {fileID: 0}
-  my_ItemKind:
-    m_InternalValue: 0
-  hide:
-    m_InternalValue: 0
   cinemachine_CM: {fileID: 3250967842722467537}
 --- !u!114 &7809954582285610385
 MonoBehaviour:
