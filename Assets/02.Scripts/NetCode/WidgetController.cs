@@ -8,4 +8,8 @@ public class WidgetController : MonoBehaviour
     {
         SceneManager.LoadScene(TargetSceneName);
     }
+    public void RoomJoin()
+    {
+        Debug.Log("¹æ»ý¼º");
+    }
 }
