@@ -260,17 +260,21 @@ namespace StarterAssets
             if (IsOwner)
             {
                 cinemachine_CM?.SetActive(true);
+
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
             }
 
-            // 클라이언트가 소유하지 않은 경우 입력 비활성화
             if (!IsOwner)
             {
                 if (TryGetComponent(out PlayerInput input))
                     input.enabled = false;
-
                 if (TryGetComponent(out StarterAssetsInputs sai))
                     sai.enabled = false;
             }
+
+            hide.OnValueChanged += OnHideChanged;
+            OnHideChanged(false, hide.Value);
         }
 
 
@@ -632,6 +636,28 @@ namespace StarterAssets
             SprintSpeed.Value = _defaultSprintSpeed;
             Debug.LogFormat("{0}, {1}, {2}", MoveSpeed.Value, SprintSpeed.Value, equip.Value);
 
+        }
+
+
+        // hide 벨류에 따라 렌더러의 온, 오프
+        private void OnHideChanged(bool oldValue, bool newValue)
+        {
+            Renderer[] renderers = GetComponentsInChildren<Renderer>();
+            foreach (var r in renderers)
+            {
+                r.enabled = !newValue; // hide == true면 꺼짐
+            }
+
+            if (newValue) // 숨기 시작할 때
+            {
+                _input.move = Vector2.zero;
+                _input.sprint = false;
+                _serverInputMove = Vector2.zero;
+                _serverInputSprint = false;
+
+                // 만약 CharacterController 쓰면 속도도 리셋
+                _controller.Move(Vector3.zero);
+            }
         }
 
         #region[애니메이션 이벤트]
