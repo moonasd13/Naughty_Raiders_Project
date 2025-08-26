@@ -31,24 +31,20 @@ public class GameUI : MonoBehaviour
 
     void Initialized()
     {
-        if (m_upBtn != null && m_downBtn != null)
-        {
-            m_upBtn.onClick.RemoveAllListeners();
-            m_downBtn.onClick.RemoveAllListeners();
-            m_upBtn.onClick.AddListener(UpButtonEvent);
-            m_downBtn.onClick.AddListener(DownButtonEvent);
-        }
+        //if (m_upBtn != null && m_downBtn != null)
+        //{
+        //    m_upBtn.onClick.RemoveAllListeners();
+        //    m_downBtn.onClick.RemoveAllListeners();
+        //    m_upBtn.onClick.AddListener(UpButtonEvent);
+        //    m_downBtn.onClick.AddListener(DownButtonEvent);
+        //}
     }
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (!playerUIPanel.activeSelf) playerUIPanel.SetActive(true);
-        }
-        else
-        {
-            if (playerUIPanel.activeSelf) playerUIPanel.SetActive(false);
+            playerUIPanel.SetActive(!playerUIPanel.activeSelf);
         }
     }
 
@@ -72,13 +68,13 @@ public class GameUI : MonoBehaviour
         }
     }
 
-    void UpButtonEvent()
-    {
-        DatabaseManager.Instance.ChangeGold(+m_amount);
-    }
+    //void UpButtonEvent()
+    //{
+    //    DatabaseManager.Instance.ChangeGold(+m_amount);
+    //}
 
-    void DownButtonEvent()
-    {
-        DatabaseManager.Instance.ChangeGold(-m_amount);
-    }
+    //void DownButtonEvent()
+    //{
+    //    DatabaseManager.Instance.ChangeGold(-m_amount);
+    //}
 }

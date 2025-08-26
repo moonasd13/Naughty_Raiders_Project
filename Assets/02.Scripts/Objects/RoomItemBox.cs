@@ -71,7 +71,7 @@ public class RoomItemBox : NetworkBehaviour
     {
         if (NetworkManager.LocalClientId == clientId)
         {
-            DatabaseManager.Instance.ChangeGold(goldAmount);
+            //DatabaseManager.Instance.ChangeGold(goldAmount);
         }
     }
 }

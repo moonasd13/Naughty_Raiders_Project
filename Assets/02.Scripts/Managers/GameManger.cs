@@ -77,8 +77,10 @@ void Update()
         Room04_Score = 0;
         itemSpawner.SpawnerOn();
 
-        DatabaseManager.Instance.ResetAllPlayersGold(); //플레이어 골드 데이터 초기화
-        DatabaseManager.Instance.LoadAllPlayersData();  //UI 갱신  
+        string roomId = PlayerPrefs.GetString("CurrentRoomId", "");
+
+        DatabaseManager.Instance.ResetRoomPlayersGold(roomId); //플레이어 골드 데이터 초기화
+        DatabaseManager.Instance.LoadRoomPlayers(roomId);  //UI 갱신  
     }
 
 
