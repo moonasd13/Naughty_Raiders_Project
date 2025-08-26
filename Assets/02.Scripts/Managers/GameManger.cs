@@ -1,6 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
+using DefineEnum;
 
 public class GameManger : MonoBehaviour
 {
@@ -13,12 +14,17 @@ public class GameManger : MonoBehaviour
     public Transform[] Room_StartPoses;
     public GameObject[] Room_Chests;
 
+    /// <summary>
+    /// 상자 카운팅용 변수
+    /// </summary>
     private int Room01_Score = 0;
     private int Room02_Score = 0;
     private int Room03_Score = 0;
     private int Room04_Score = 0;
     private bool countingEnd = false;
-    private bool is_GameStart = false;
+
+    GameState NowGameState = GameState.None;
+
 
     void Start()
     {
@@ -27,11 +33,16 @@ public class GameManger : MonoBehaviour
 
 void Update()
     {
-        if(NetworkManager.Singleton.IsHost && !is_GameStart)
+        switch (NowGameState)
         {
-            GameStart();
-            is_GameStart=true;
+            case GameState.Redy:
+                GameStart();
+                NowGameState = GameState.firstTime;
+                break;
+            case GameState.firstTime: break;
+            case GameState.secondTime: break;
         }
+
     }
 
     /// <summary>
