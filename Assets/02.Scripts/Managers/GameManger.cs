@@ -31,7 +31,7 @@ public class GameManger : MonoBehaviour
        
     }
 
-void Update()
+    void Update()
     {
         switch (NowGameState)
         {
