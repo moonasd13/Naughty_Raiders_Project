@@ -1483,7 +1483,19 @@ MonoBehaviour:
   WidgetConfiguration: {fileID: 11400000, guid: c077e228ab4ad1a499de0d98663666e0, type: 2}
   JoiningSession:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 552150099}
+        m_TargetAssemblyTypeName: WidgetController, Assembly-CSharp
+        m_MethodName: SceneChange
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   JoinedSession:
     m_PersistentCalls:
       m_Calls: []
@@ -5883,7 +5895,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2992695699454223978, guid: d712f61c4c2e6c54cb754f1524c389d3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3823474087926677606, guid: d712f61c4c2e6c54cb754f1524c389d3, type: 3}
       propertyPath: m_LocalPosition.x
