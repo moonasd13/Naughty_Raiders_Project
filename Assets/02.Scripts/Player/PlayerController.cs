@@ -231,9 +231,15 @@ namespace StarterAssets
                 {
                     switch (my_ItemKind.Value)
                     {
-                        case ItemKind.Gun: ShootiongaAnimation(); break;
+                        case ItemKind.Gun:
+                            ShootiongaAnimation();
+                            if (GameUI.Instance != null) GameUI.Instance.HideItem("Gun"); // 사용 후 UI 비활성화
+                            break;
 
-                        case ItemKind.Speed: UseSpeedItem(1.3f); break;
+                        case ItemKind.Speed:
+                            UseSpeedItem(1.3f);
+                            if (GameUI.Instance != null) GameUI.Instance.HideItem("Speed"); // 사용 후 UI 비활성화
+                            break;
 
                         default:
                             return;
@@ -242,7 +248,11 @@ namespace StarterAssets
                    
 
                 if (!_isStun && UnityEngine.Input.GetKeyDown(KeyCode.E))
+                {
+                    TryPickupItem();
                     TryInteractWithNearbyBox();
+                }
+
             }
 
             // Server 전용 처리
@@ -252,6 +262,28 @@ namespace StarterAssets
                 _input.sprint = _serverInputSprint;
                 JumpAndGravity();
                 Move();
+            }
+        }
+
+        private void TryPickupItem()
+        {
+            Collider[] hits = Physics.OverlapSphere(transform.position, 2.5f); // 반경 2.5m
+            foreach (var hit in hits)
+            {
+                if (hit.CompareTag("Item_gun"))
+                {
+                    hit.gameObject.SetActive(false);
+                    if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Gun"); // UI 이미지 활성화
+                    GetItemKind(ItemKind.Gun);
+                    break;
+                }
+                else if (hit.CompareTag("Item_speed"))
+                {
+                    hit.gameObject.SetActive(false);
+                    if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Speed"); // UI 이미지 활성화
+                    GetItemKind(ItemKind.Speed);
+                    break;
+                }
             }
         }
 

@@ -13,7 +13,6 @@ public class PlayerNameUI : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        Debug.Log($"[PlayerNameUI] My Nickname at Spawn: {AuthManager.Instance.CurrentNickname}");
         // 닉네임 동기화 이벤트 연결
         playerName.OnValueChanged += OnNameChanged;
         nameText.text = playerName.Value.ToString();

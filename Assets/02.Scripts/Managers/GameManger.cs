@@ -88,10 +88,11 @@ public class GameManger : MonoBehaviour
         Room04_Score = 0;
         itemSpawner.SpawnerOn();
 
-        string roomId = PlayerPrefs.GetString("CurrentRoomId", "");
+        // 모든 플레이어 골드 초기화
+        DatabaseManager.Instance.ResetAllPlayersGold();
 
-        DatabaseManager.Instance.ResetRoomPlayersGold(roomId); //플레이어 골드 데이터 초기화
-        DatabaseManager.Instance.LoadRoomPlayers(roomId);  //UI 갱신  
+        // 모든 플레이어 닉네임 + 골드 불러와서 UI 갱신
+        DatabaseManager.Instance.LoadAllPlayersData();
     }
 
 
