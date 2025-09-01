@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using DefineEnum;
 
-public class GameManger : MonoBehaviour
+public class GameManger : NetworkBehaviour
 {
     [Header("컴포넌트")]
     [SerializeField]
@@ -11,7 +11,6 @@ public class GameManger : MonoBehaviour
     public ItemSpawner itemSpawner;
     [SerializeField]
     [Header("플레이어 시작지점")]
-    public Transform[] Room_StartPoses;
     public GameObject[] Room_Chests;
 
     /// <summary>
@@ -23,21 +22,28 @@ public class GameManger : MonoBehaviour
     private int Room04_Score = 0;
     private bool countingEnd = false;
 
-    GameState NowGameState = GameState.None;
+    private NetworkVariable<GameState> NowGameState = new NetworkVariable<GameState>(
+     GameState.Redy,
+     NetworkVariableReadPermission.Everyone,
+     NetworkVariableWritePermission.Server
+ );
 
 
     void Start()
     {
-       
+        Debug.Log(NowGameState.Value);
     }
 
     void Update()
     {
-        switch (NowGameState)
+        if (!IsServer) return;
+
+        switch (NowGameState.Value)
         {
             case GameState.Redy:
+                Debug.Log("레디상태");
                 GameStart();
-                NowGameState = GameState.firstTime;
+                NowGameState.Value = GameState.firstTime;
                 break;
             case GameState.firstTime: break;
             case GameState.secondTime: break;
@@ -86,6 +92,7 @@ public class GameManger : MonoBehaviour
         Room02_Score = 0;
         Room03_Score = 0;
         Room04_Score = 0;
+        
         itemSpawner.SpawnerOn();
 
         // 모든 플레이어 골드 초기화
