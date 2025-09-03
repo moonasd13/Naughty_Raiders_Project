@@ -159,7 +159,7 @@ public class AuthManager : MonoBehaviour
     #region LoadScene
     void LoadScene()
     {
-        SceneManager.LoadSceneAsync("01_Lobby_Test");
+        SceneManager.LoadSceneAsync("01_Lobby");
     }
     #endregion
 }

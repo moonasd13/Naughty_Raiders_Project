@@ -5,6 +5,8 @@ using DefineEnum;
 
 public class GameManger : NetworkBehaviour
 {
+    public static GameManger Instance { get; private set; }
+
     [Header("컴포넌트")]
     [SerializeField]
     public GateController gateController;
@@ -27,7 +29,16 @@ public class GameManger : NetworkBehaviour
      NetworkVariableReadPermission.Everyone,
      NetworkVariableWritePermission.Server
  );
-
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     void Start()
     {
@@ -42,13 +53,14 @@ public class GameManger : NetworkBehaviour
         {
             case GameState.Redy:
                 Debug.Log("레디상태");
-                GameStart();
+                //GameStart();
                 NowGameState.Value = GameState.firstTime;
                 break;
-            case GameState.firstTime: break;
+            case GameState.firstTime:
+                //GameStart();
+                break;
             case GameState.secondTime: break;
         }
-
     }
 
     /// <summary>
@@ -88,6 +100,7 @@ public class GameManger : NetworkBehaviour
     /// </summary>
     private void GameStart()
     {
+        GameTimer.Instance.RequestStartTimerServerRpc();    // 이게 실행 되면 타이머가 돌아감
         Room01_Score = 0;
         Room02_Score = 0;
         Room03_Score = 0;
@@ -111,4 +124,8 @@ public class GameManger : NetworkBehaviour
         }
     }
 
+    public void GameStateChange(GameState curState)
+    {
+        NowGameState.Value = curState;
+    }
 }
