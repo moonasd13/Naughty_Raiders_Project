@@ -270,14 +270,14 @@ namespace StarterAssets
             Collider[] hits = Physics.OverlapSphere(transform.position, 2.5f); // 반경 2.5m
             foreach (var hit in hits)
             {
-                if (hit.CompareTag("Item_gun"))
+                if (hit.CompareTag("Item_Gun"))
                 {
                     hit.gameObject.SetActive(false);
                     if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Gun"); // UI 이미지 활성화
                     GetItemKind(ItemKind.Gun);
                     break;
                 }
-                else if (hit.CompareTag("Item_speed"))
+                else if (hit.CompareTag("Item_Speed"))
                 {
                     hit.gameObject.SetActive(false);
                     if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Speed"); // UI 이미지 활성화

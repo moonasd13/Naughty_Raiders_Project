@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using DefineEnum;
 
 public class GateController : MonoBehaviour
 {
@@ -30,5 +31,6 @@ public class GateController : MonoBehaviour
         }
 
         gatePart.position = endPos;
+        GameManger.Instance.GameStateChange(GameState.secondTime);
     }
 }

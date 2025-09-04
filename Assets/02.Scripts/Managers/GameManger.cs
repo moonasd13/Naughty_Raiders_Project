@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.AI;
 using static UnityEditor.PlayerSettings;
+using Unity.VisualScripting;
 
 public class GameManger : NetworkBehaviour
 {
@@ -19,7 +20,11 @@ public class GameManger : NetworkBehaviour
     public GameObject[] Room_Chests;
     public Transform[] RoomsSPos;
 
+
     private bool is_GameStarted = false;
+    private bool is_playersPosChanged = false;
+    private bool is_GateOpen = false;
+    private float currentTime;
 
 
     /// <summary>
@@ -55,18 +60,38 @@ public class GameManger : NetworkBehaviour
     {
         if (!IsServer) return;
 
+        currentTime = GameTimer.Instance.TimeLeft.Value;
+
         switch (NowGameState.Value)
         {
             case GameState.Redy:
-                if(is_GameStarted)
+                if(!is_GameStarted)
                 {
                     GameStart();
+                    is_GameStarted = true;
                 }
-                //NowGameState.Value = GameState.firstTime;
                 break;
             case GameState.firstTime:
+                if(!is_playersPosChanged)
+                {
+                    TeleportPlayersServerRpc();
+                    GameTimer.Instance.RequestStartTimerServerRpc();    // 이게 실행 되면 타이머가 돌아감
+                    is_playersPosChanged = true;
+                }
+
+                if(currentTime <= 540)
+                {
+                    if(!is_GateOpen)
+                    {
+                        gateController.OpenGate();
+                        is_GateOpen = true;
+                    }
+                }
+
                 break;
-            case GameState.secondTime: break;
+            case GameState.secondTime:
+                Debug.Log("두번째 시간");
+                break;
         }
     }
 
@@ -107,7 +132,6 @@ public class GameManger : NetworkBehaviour
     /// </summary>
     private void GameStart()
     {
-        GameTimer.Instance.RequestStartTimerServerRpc();    // 이게 실행 되면 타이머가 돌아감
         Room01_Score = 0;
         Room02_Score = 0;
         Room03_Score = 0;
@@ -122,13 +146,19 @@ public class GameManger : NetworkBehaviour
         DatabaseManager.Instance.LoadAllPlayersData();
     }
 
-
+    #region[캐릭터 텔레포트]
+    /// <summary>
+    /// 서버 이동 명령 RPC
+    /// </summary>
     [ServerRpc(RequireOwnership = false)]
     public void TeleportPlayersServerRpc()
     {
         ChangePositions();
     }
 
+    /// <summary>
+    /// 실질적 이동 코드, 컨트롤러 비활성화
+    /// </summary>
     private void ChangePositions()
     {
         foreach (NetworkPlayer player in NetworkPlayer.AllPlayers)
@@ -157,26 +187,21 @@ public class GameManger : NetworkBehaviour
         }
     }
 
+    // 컨트롤러 재 화성화 코루틴
     private IEnumerator ReenableNextFrame(PlayerController playerCon, CharacterController controller, ulong clientId, Vector3 targetPos)
     {
         yield return null; // 한 프레임 대기
 
         if (controller != null) controller.enabled = true;
         playerCon.enabled = true;
-
-        Debug.Log($"플레이어 {clientId}를 {targetPos}로 이동 후 재활성화 완료");
     }
+    #endregion
 
     void OnGUI()
     {
         if (GUI.Button(new Rect(10, 10, 120, 40), "Click Me"))
         {
             ScoreCounting();
-        }
-
-        if (GUI.Button(new Rect(10, 50, 120, 40), "Click Me"))
-        {
-            TeleportPlayersServerRpc();
         }
     }
 
