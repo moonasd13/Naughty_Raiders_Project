@@ -15,7 +15,7 @@ public class ReadyToController : NetworkBehaviour
             // 호스트는 무조건 ready
             ulong hostId = NetworkManager.Singleton.LocalClientId;
             playerReady[hostId] = true;
-            Debug.Log($"Host({hostId}) Ready = true");
+            Debug.Log($"Host({hostId}) Ready = true");  
         }
     }
 

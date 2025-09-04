@@ -1,7 +1,10 @@
+using DefineEnum;
+using StarterAssets;
 using Unity.Netcode;
 using UnityEngine;
+using System.Collections;
 using UnityEngine.AI;
-using DefineEnum;
+using static UnityEditor.PlayerSettings;
 
 public class GameManger : NetworkBehaviour
 {
@@ -14,6 +17,10 @@ public class GameManger : NetworkBehaviour
     [SerializeField]
     [Header("플레이어 시작지점")]
     public GameObject[] Room_Chests;
+    public Transform[] RoomsSPos;
+
+    private bool is_GameStarted = false;
+
 
     /// <summary>
     /// 상자 카운팅용 변수
@@ -42,7 +49,6 @@ public class GameManger : NetworkBehaviour
 
     void Start()
     {
-        Debug.Log(NowGameState.Value);
     }
 
     void Update()
@@ -52,12 +58,13 @@ public class GameManger : NetworkBehaviour
         switch (NowGameState.Value)
         {
             case GameState.Redy:
-                Debug.Log("레디상태");
-                //GameStart();
-                NowGameState.Value = GameState.firstTime;
+                if(is_GameStarted)
+                {
+                    GameStart();
+                }
+                //NowGameState.Value = GameState.firstTime;
                 break;
             case GameState.firstTime:
-                //GameStart();
                 break;
             case GameState.secondTime: break;
         }
@@ -116,11 +123,60 @@ public class GameManger : NetworkBehaviour
     }
 
 
+    [ServerRpc(RequireOwnership = false)]
+    public void TeleportPlayersServerRpc()
+    {
+        ChangePositions();
+    }
+
+    private void ChangePositions()
+    {
+        foreach (NetworkPlayer player in NetworkPlayer.AllPlayers)
+        {
+            PlayerController playerCon = player.GetComponent<PlayerController>();
+            ulong targetClientId = player.OwnerClientId;
+
+            if (playerCon != null)
+            {
+                Vector3 targetPos = RoomsSPos[(int)targetClientId].position;
+                Quaternion targetRot = RoomsSPos[(int)targetClientId].rotation;
+
+                // 이동 로직 잠시 끄기
+                playerCon.enabled = false;
+
+                // CharacterController도 같이 끄기
+                var controller = playerCon.GetComponent<CharacterController>();
+                if (controller != null) controller.enabled = false;
+
+                // 좌표 강제 세팅
+                playerCon.transform.SetPositionAndRotation(targetPos, targetRot);
+
+                // 코루틴으로 한 프레임 뒤에 다시 켜기
+                StartCoroutine(ReenableNextFrame(playerCon, controller, targetClientId, targetPos));
+            }
+        }
+    }
+
+    private IEnumerator ReenableNextFrame(PlayerController playerCon, CharacterController controller, ulong clientId, Vector3 targetPos)
+    {
+        yield return null; // 한 프레임 대기
+
+        if (controller != null) controller.enabled = true;
+        playerCon.enabled = true;
+
+        Debug.Log($"플레이어 {clientId}를 {targetPos}로 이동 후 재활성화 완료");
+    }
+
     void OnGUI()
     {
         if (GUI.Button(new Rect(10, 10, 120, 40), "Click Me"))
         {
             ScoreCounting();
+        }
+
+        if (GUI.Button(new Rect(10, 50, 120, 40), "Click Me"))
+        {
+            TeleportPlayersServerRpc();
         }
     }
 
