@@ -6,9 +6,6 @@ using Define_Enums;
 using UnityEngine.Windows;
 using UnityEngine.Rendering.Universal;
 using Unity.Netcode.Components;
-using UnityEditor.Rendering;
-
-
 
 
 #if ENABLE_INPUT_SYSTEM
@@ -249,7 +246,6 @@ namespace StarterAssets
 
                 if (!_isStun && UnityEngine.Input.GetKeyDown(KeyCode.E))
                 {
-                    TryPickupItem();
                     TryInteractWithNearbyBox();
                 }
 
@@ -262,28 +258,6 @@ namespace StarterAssets
                 _input.sprint = _serverInputSprint;
                 JumpAndGravity();
                 Move();
-            }
-        }
-
-        private void TryPickupItem()
-        {
-            Collider[] hits = Physics.OverlapSphere(transform.position, 2.5f); // 반경 2.5m
-            foreach (var hit in hits)
-            {
-                if (hit.CompareTag("Item_Gun"))
-                {
-                    hit.gameObject.SetActive(false);
-                    if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Gun"); // UI 이미지 활성화
-                    GetItemKind(ItemKind.Gun);
-                    break;
-                }
-                else if (hit.CompareTag("Item_Speed"))
-                {
-                    hit.gameObject.SetActive(false);
-                    if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Speed"); // UI 이미지 활성화
-                    GetItemKind(ItemKind.Speed);
-                    break;
-                }
             }
         }
 
@@ -308,7 +282,6 @@ namespace StarterAssets
             hide.OnValueChanged += OnHideChanged;
             OnHideChanged(false, hide.Value);
         }
-
 
         private void LateUpdate()
         {
@@ -363,7 +336,7 @@ namespace StarterAssets
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
                 // 마우스의 위로 움직이면 위를 보고 아래로 움직이면 아래를 본다.
-                _cinemachineTargetPitch += _input.look.y * RotationSpeed * deltaTimeMultiplier;
+                _cinemachineTargetPitch -= _input.look.y * RotationSpeed * deltaTimeMultiplier;
                 _rotationVelocity = _input.look.x * RotationSpeed * deltaTimeMultiplier;
 
                 // clamp our pitch rotation
@@ -651,6 +624,8 @@ namespace StarterAssets
             _defaultMoveSpeed = MoveSpeed.Value;
             _defaultSprintSpeed = SprintSpeed.Value;
             equip.Value = false;
+            my_ItemKind.Value = ItemKind.None;
+
 
             MoveSpeed.Value *= speedIncrease;
             SprintSpeed.Value *= speedIncrease;
@@ -751,14 +726,16 @@ namespace StarterAssets
         [ServerRpc]
         void ShootingOffServerRpc()
         {
-     
-                in_action.Value = false;
-                equip.Value = false;
-                _animator.SetBool("Shooting", false);
-                Item.gameObject.GetComponent<NetworkObject>().Despawn();
-                Item = null;
-        }
 
+            in_action.Value = false;
+            equip.Value = false;
+            my_ItemKind.Value = ItemKind.None;
+
+            _animator.SetBool("Shooting", false);
+            Item.gameObject.GetComponent<NetworkObject>().Despawn();
+            Item = null;
+        }
+        
         //발소리
         private void OnFootstep(AnimationEvent animationEvent)
         {

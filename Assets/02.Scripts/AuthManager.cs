@@ -1,8 +1,6 @@
 using Firebase.Auth;
 using Firebase.Extensions;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using Firebase.Database;
 using UnityEngine.UI;

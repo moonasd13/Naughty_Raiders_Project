@@ -79,8 +79,20 @@ public class ItemObject : NetworkBehaviour
 
         _firstPlayerController.equip.Value = true;
         _firstPlayerController.GetItemKind(item_kind);
-        GetComponent<NetworkObject>().Despawn(true);
+
+        if (this.CompareTag("Item_Gun"))
+        {
+            if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Gun");
+        }
+        else if (this.CompareTag("Item_Speed"))
+        {
+            if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Speed"); 
+        }
+
+            GetComponent<NetworkObject>().Despawn(true);
+
     }
+
 
 
     /// <summary>

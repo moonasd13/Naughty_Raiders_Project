@@ -4,8 +4,6 @@ using Unity.Netcode;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
-using Unity.VisualScripting;
 
 public class GameManger : NetworkBehaviour
 {
@@ -79,7 +77,7 @@ public class GameManger : NetworkBehaviour
                     is_playersPosChanged = true;
                 }
 
-                if(currentTime <= 540)
+                if (currentTime <= 590) //560
                 {
                     if(!is_GateOpen)
                     {
@@ -90,8 +88,11 @@ public class GameManger : NetworkBehaviour
 
                 break;
             case GameState.secondTime:
-                Debug.Log("두번째 시간");
-                break;
+                if (currentTime <= 0)
+                {
+                    Debug.Log("game end"); 
+                }
+                    break;
         }
     }
 

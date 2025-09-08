@@ -96,7 +96,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   _senseZone: {fileID: 2040057118816942931}
-  moveSpeed: 5
+  rayDistance: 0.5
+  moveSpeed: 10
 --- !u!114 &6942713529587783496
 MonoBehaviour:
   m_ObjectHideFlags: 0
