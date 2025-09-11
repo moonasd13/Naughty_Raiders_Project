@@ -36,58 +36,51 @@ public class DatabaseManager : MonoBehaviour
         //LoadNickFromDatabase();
     }
 
-    public void LoadGoldFromDatabase()                  //골드값 불러오기
+    public void LoadGoldFromDatabase(PlayerData player)     //골드 불러오기
     {
-        m_databaseRef.Child("users").Child(m_userId).Child("Gold").GetValueAsync().ContinueWithOnMainThread(task =>
+        m_databaseRef.Child("users").Child(m_userId).Child("Gold").GetValueAsync()
+        .ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
             {
-                var snapshot = task.Result;
                 int gold = 0;
+                var snapshot = task.Result;
                 if (snapshot.Exists && int.TryParse(snapshot.Value.ToString(), out gold))
                 {
-                    m_gameUI.SetGold(gold);
+                    player.Gold.Value = gold;  //UI 말고 PlayerData에 반영
                 }
                 else
                 {
-                    Debug.LogWarning("Gold 값이 데이터베이스에 없음.");
-                    m_gameUI.SetGold(0);
+                    player.Gold.Value = 0;
                 }
             }
-            else Debug.LogError("Gold 불러오기 실패: " + task.Exception);
         });
     }
 
-    public void LoadNickFromDatabase()                  //닉네임 불러오기
+    public void LoadNickFromDatabase(PlayerData player)     //닉네임 불러오기
     {
-        m_databaseRef.Child("users").Child(m_userId).Child("Nickname").GetValueAsync().ContinueWithOnMainThread(task =>
+        m_databaseRef.Child("users").Child(m_userId).Child("Nickname").GetValueAsync()
+        .ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
             {
                 var snapshot = task.Result;
-                if (snapshot.Exists)
-                {
-                    string nickName = snapshot.Value.ToString();
-                    m_gameUI.SetNickName(nickName);
-                }
-                else
-                {
-                    Debug.LogWarning("닉네임이 데이터베이스에 없음.");
-                    m_gameUI.SetNickName("NoName");
-                }
+                player.Nickname.Value = snapshot.Exists ? snapshot.Value.ToString() : "NoName";
             }
-            else Debug.LogError("닉네임 불러오기 실패: " + task.Exception);
         });
     }
 
-    public void ChangeGold(int amount)   //골드값 변경
+    public void ChangeGold(PlayerData player, int amount)
     {
-        int newGoldCount = Mathf.Clamp(m_gameUI.m_curGold + amount, 0, m_maxGoldCount);
+        int newGoldCount = Mathf.Clamp(player.Gold.Value + amount, 0, m_maxGoldCount);
 
-        m_databaseRef.Child("users").Child(m_userId).Child("Gold").SetValueAsync(newGoldCount).ContinueWithOnMainThread(task =>
+        m_databaseRef.Child("users").Child(m_userId).Child("Gold").SetValueAsync(newGoldCount)
+        .ContinueWithOnMainThread(task =>
         {
-            if (task.IsCompletedSuccessfully) m_gameUI.SetGold(newGoldCount);
-            else Debug.LogError("Gold 저장 실패: " + task.Exception);
+            if (task.IsCompletedSuccessfully)
+            {
+                player.Gold.Value = newGoldCount; // 네트워크 변수 갱신
+            }
         });
     }
 
@@ -102,24 +95,11 @@ public class DatabaseManager : MonoBehaviour
                     string userId = child.Key;
                     m_databaseRef.Child("users").Child(userId).Child("Gold").SetValueAsync(0);
                 }
-            }
-        });
-    }
 
-    public void LoadAllPlayersData()          //플레이어 데이터 불러오기
-    {
-        m_databaseRef.Child("users").OrderByChild("JoinOrder").GetValueAsync().ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompletedSuccessfully)
-            {
-                int index = 0;
-                foreach (var child in task.Result.Children)
+                foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
                 {
-                    string nick = child.Child("Nickname").Value?.ToString() ?? "NoName";
-                    int gold = int.Parse(child.Child("Gold").Value?.ToString() ?? "0");
-
-                    m_gameUI.UpdatePlayerUI(index, nick, gold);
-                    index++;
+                    if (player.IsServer)
+                        player.Gold.Value = 0;
                 }
             }
         });

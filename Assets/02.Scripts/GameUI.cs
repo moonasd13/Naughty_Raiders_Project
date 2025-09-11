@@ -22,11 +22,14 @@ public class GameUI : MonoBehaviour
     [HideInInspector] public int m_curGold;
     [HideInInspector] public string m_nickName;
 
-    [Header("플레이어 UI 리스트")]
-    public List<PlayerUI> playersUI;
+    [Header("플레이어 UI 리스트 (동적 생성)")]
+    [SerializeField] Transform playerListParent;   //UI 패널 안에 PlayerUI 프리팹이 들어갈 위치
+    [SerializeField] PlayerUI playerUIPrefab;
 
     [Header("플레이어 패널 (Tab으로 토글)")]
     public GameObject playerUIPanel;
+
+    Dictionary<ulong, PlayerUI> playerUIMap = new Dictionary<ulong, PlayerUI>();
 
     public int m_amount = 10;
 
@@ -44,20 +47,20 @@ public class GameUI : MonoBehaviour
 
     void Start()
     {
-        if (DatabaseManager.Instance != null)
-        {
-            // 골드/닉네임 불러오기
-            DatabaseManager.Instance.LoadGoldFromDatabase();
-            DatabaseManager.Instance.LoadNickFromDatabase();
+        //if (DatabaseManager.Instance != null)
+        //{
+        //    // 골드/닉네임 불러오기
+        //    DatabaseManager.Instance.LoadGoldFromDatabase();
+        //    DatabaseManager.Instance.LoadNickFromDatabase();
 
-            // 모든 플레이어 데이터 불러오기
-            DatabaseManager.Instance.LoadAllPlayersData();
-        }
+        //    // 모든 플레이어 데이터 불러오기
+        //    DatabaseManager.Instance.LoadAllPlayersData();
+        //}
 
         if (playerUIPanel != null) playerUIPanel.SetActive(false);
 
-        if (m_upBtn != null) m_upBtn.onClick.AddListener(() => DatabaseManager.Instance.ChangeGold(+m_amount));
-        if (m_downBtn != null) m_downBtn.onClick.AddListener(() => DatabaseManager.Instance.ChangeGold(-m_amount));
+        //if (m_upBtn != null) m_upBtn.onClick.AddListener(() => DatabaseManager.Instance.ChangeGold(+m_amount));
+        //if (m_downBtn != null) m_downBtn.onClick.AddListener(() => DatabaseManager.Instance.ChangeGold(-m_amount));
     }
 
     void Update()
@@ -80,12 +83,45 @@ public class GameUI : MonoBehaviour
         if (m_nickNameText != null) m_nickNameText.text = m_nickName;
     }
 
-    public void UpdatePlayerUI(int index, string nick, int gold)
+    public void RegisterPlayer(PlayerData playerData)   //전체 플레이어 UI 관리
     {
-        if (index >= 0 && index < playersUI.Count && playersUI[index] != null)
+        if (playerUIMap.ContainsKey(playerData.OwnerClientId)) return;
+
+        PlayerUI ui = Instantiate(playerUIPrefab, playerListParent);
+        playerUIMap[playerData.OwnerClientId] = ui;
+        UpdatePlayer(playerData);
+    }
+
+    public void UpdatePlayer(PlayerData playerData)
+    {
+        if (playerUIMap.TryGetValue(playerData.OwnerClientId, out var ui))
         {
-            playersUI[index].SetPlayerData(nick, gold);
+            ui.SetPlayerData(playerData.Nickname.Value.ToString(), playerData.Gold.Value);
         }
+        
+        if (playerData.IsOwner)     //오너라면 내 UI도 업데이트
+        {
+            SetGold(playerData.Gold.Value);
+            SetNickName(playerData.Nickname.Value.ToString());
+        }
+    }
+
+    public void UnregisterPlayer(PlayerData playerData)
+    {
+        if (playerUIMap.TryGetValue(playerData.OwnerClientId, out var ui))
+        {
+            Destroy(ui.gameObject);
+            playerUIMap.Remove(playerData.OwnerClientId);
+        }
+    }
+
+    private PlayerData FindLocalPlayerData()    //본인 PlayerData 찾기
+    {
+        foreach (var pd in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
+        {
+            if (pd.IsOwner) return pd;
+        }
+        return null;
     }
 
     public void ShowItem(string itemType)
@@ -114,13 +150,13 @@ public class GameUI : MonoBehaviour
         }
     }
 
-    void UpButtonEvent()
-    {
-        DatabaseManager.Instance.ChangeGold(+m_amount);
-    }
+//    void UpButtonEvent()
+//    {
+//        DatabaseManager.Instance.ChangeGold(+m_amount);
+//    }
 
-    void DownButtonEvent()
-    {
-        DatabaseManager.Instance.ChangeGold(-m_amount);
-    }
+//    void DownButtonEvent()
+//    {
+//        DatabaseManager.Instance.ChangeGold(-m_amount);
+//    }
 }
