@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class DatabaseManager : MonoBehaviour
 {
@@ -36,9 +37,9 @@ public class DatabaseManager : MonoBehaviour
         //LoadNickFromDatabase();
     }
 
-    public void LoadGoldFromDatabase(PlayerData player)     //골드 불러오기
+    public void LoadGoldFromDatabase(PlayerData player, string firebaseUid)     //골드 불러오기
     {
-        m_databaseRef.Child("users").Child(m_userId).Child("Gold").GetValueAsync()
+        m_databaseRef.Child("users").Child(firebaseUid).Child("Gold").GetValueAsync()
         .ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
@@ -57,9 +58,9 @@ public class DatabaseManager : MonoBehaviour
         });
     }
 
-    public void LoadNickFromDatabase(PlayerData player)     //닉네임 불러오기
+    public void LoadNickFromDatabase(PlayerData player, string firebaseUid)     //닉네임 불러오기
     {
-        m_databaseRef.Child("users").Child(m_userId).Child("Nickname").GetValueAsync()
+        m_databaseRef.Child("users").Child(firebaseUid).Child("Nickname").GetValueAsync()
         .ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
@@ -70,11 +71,11 @@ public class DatabaseManager : MonoBehaviour
         });
     }
 
-    public void ChangeGold(PlayerData player, int amount)
+    public void ChangeGold(PlayerData player, int amount, string firebaseUid)
     {
         int newGoldCount = Mathf.Clamp(player.Gold.Value + amount, 0, m_maxGoldCount);
 
-        m_databaseRef.Child("users").Child(m_userId).Child("Gold").SetValueAsync(newGoldCount)
+        m_databaseRef.Child("users").Child(firebaseUid).Child("Gold").SetValueAsync(newGoldCount)
         .ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
@@ -102,6 +103,17 @@ public class DatabaseManager : MonoBehaviour
                         player.Gold.Value = 0;
                 }
             }
+        });
+    }
+
+    public void SaveGoldToDatabase(string uid, int gold)
+    {
+        m_databaseRef.Child("users").Child(uid).Child("Gold").SetValueAsync(gold).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+                Debug.Log($"골드 {gold} 저장 완료: {uid}");
+            else
+                Debug.LogError("골드 저장 실패: " + task.Exception);
         });
     }
 }

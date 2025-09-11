@@ -22218,8 +22218,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -722.5, y: 260}
-  m_SizeDelta: {x: -1505, y: -580}
+  m_AnchoredPosition: {x: -722.5, y: 149.99992}
+  m_SizeDelta: {x: -1505, y: -700.0001}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &730082388
 MonoBehaviour:
@@ -22234,16 +22234,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
+    m_Left: 13
     m_Right: 0
-    m_Top: 0
+    m_Top: -25
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: -55
   m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 1
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
@@ -54264,8 +54264,8 @@ MonoBehaviour:
   m_goldCountText: {fileID: 1106649389}
   m_nickNameText: {fileID: 1413456202}
   m_timerText: {fileID: 0}
-  m_upBtn: {fileID: 1064584078}
-  m_downBtn: {fileID: 1292653458}
+  upButton: {fileID: 1064584078}
+  downButton: {fileID: 1292653458}
   gunImage: {fileID: 1249318255}
   speedImage: {fileID: 117662094}
   m_curGold: 0
@@ -54273,7 +54273,6 @@ MonoBehaviour:
   playerListParent: {fileID: 730082387}
   playerUIPrefab: {fileID: 1636658916867915059, guid: da2223b0e4a2cc848908b3c53c65357f, type: 3}
   playerUIPanel: {fileID: 730082384}
-  m_amount: 10
 --- !u!4 &1844089919
 Transform:
   m_ObjectHideFlags: 0

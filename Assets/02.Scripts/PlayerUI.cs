@@ -8,8 +8,8 @@ public class PlayerUI : MonoBehaviour
 
     public void SetPlayerData(string nick, int gold)
     {
-        nickNameText.text = nick;
-        goldText.text = gold.ToString();
+        if (nickNameText != null) nickNameText.text = nick;
+        if (goldText != null) goldText.text = gold.ToString();
     }
 }
 
