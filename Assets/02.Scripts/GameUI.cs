@@ -18,6 +18,7 @@ public class GameUI : MonoBehaviour
 
     [SerializeField] GameObject gunImage;
     [SerializeField] GameObject speedImage;
+    [SerializeField] GameObject coinImage;
 
     [HideInInspector] public int m_curGold;
     [HideInInspector] public string m_nickName;
@@ -51,8 +52,24 @@ public class GameUI : MonoBehaviour
 
         upButton.onClick.AddListener(OnClickUp);
         downButton.onClick.AddListener(OnClickDown);
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        }
     }
 
+    //void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Tab) && playerUIPanel != null)
+    //    {
+    //        playerUIPanel.SetActive(!playerUIPanel.activeSelf);
+    //    }
+
+    //    if (myPlayer == null && NetworkManager.Singleton.LocalClient.PlayerObject != null)
+    //    {
+    //        myPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
+    //    }
+    //}
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab) && playerUIPanel != null)
@@ -60,7 +77,25 @@ public class GameUI : MonoBehaviour
             playerUIPanel.SetActive(!playerUIPanel.activeSelf);
         }
 
-        if (myPlayer == null && NetworkManager.Singleton.LocalClient.PlayerObject != null)
+        // 안전하게 LocalPlayer 가져오기
+        if (myPlayer == null)
+        {
+            if (NetworkManager.Singleton != null &&
+                NetworkManager.Singleton.LocalClient != null &&
+                NetworkManager.Singleton.LocalClient.PlayerObject != null)
+            {
+                myPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
+                if (myPlayer == null)
+                {
+                    Debug.LogWarning("GameUI.Update: Local PlayerObject에 PlayerData가 없습니다.");
+                }
+            }
+        }
+    }
+
+    private void OnClientConnected(ulong clientId)
+    {
+        if (clientId == NetworkManager.Singleton.LocalClientId)
         {
             myPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
         }
@@ -129,6 +164,9 @@ public class GameUI : MonoBehaviour
             case "Speed":
                 if (speedImage != null) speedImage.SetActive(true);
                 break;
+            case "Coin":
+                if (coinImage != null) coinImage.SetActive(true);
+                break;
         }
     }
 
@@ -141,6 +179,9 @@ public class GameUI : MonoBehaviour
                 break;
             case "Speed":
                 if (speedImage != null) speedImage.SetActive(false);
+                break;
+            case "Coin":
+                if (coinImage != null) coinImage.SetActive(false);
                 break;
         }
     }

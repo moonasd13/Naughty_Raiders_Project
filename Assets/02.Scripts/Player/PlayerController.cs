@@ -281,6 +281,17 @@ namespace StarterAssets
 
             hide.OnValueChanged += OnHideChanged;
             OnHideChanged(false, hide.Value);
+
+            inHand.OnValueChanged += (oldValue, newValue) =>
+            {
+                if (IsOwner && GameUI.Instance != null)
+                {
+                    if (newValue)
+                        GameUI.Instance.ShowItem("Coin");   // 코인 줌 → UI 켜기
+                    else
+                        GameUI.Instance.HideItem("Coin");   // 코인 놓음 → UI 끄기
+                }
+            };
         }
 
         private void LateUpdate()
