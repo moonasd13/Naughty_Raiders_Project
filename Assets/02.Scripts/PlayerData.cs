@@ -17,6 +17,8 @@ public class PlayerData : NetworkBehaviour
     );
 
     public string FirebaseUid;
+
+    public static PlayerData LocalPlayer {  get; private set; }
     
     private void OnGoldChanged(int oldValue, int newValue)
     {
@@ -30,6 +32,11 @@ public class PlayerData : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (IsOwner)
+        {
+            LocalPlayer = this;
+        }
+
         //스폰 직후 UI에 등록
         GameUI.Instance.RegisterPlayer(this);
 

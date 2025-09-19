@@ -14,6 +14,8 @@ public class AuthManager : MonoBehaviour
 
     [SerializeField]
     MainSceneUI m_MainUI;
+    [SerializeField] GameObject nicknamePanel;
+    [SerializeField] InputField nicknameInput;
 
     public string CurrentNickname { get; private set; }
 
@@ -92,16 +94,16 @@ public class AuthManager : MonoBehaviour
         {
             if (task.IsCanceled || task.IsFaulted)
             {
-                LoginSuccess();
                 Debug.Log("회원가입 실패: " + task.Exception);
                 return;
             }
-            else
-            {
-                FirebaseUser newUser = task.Result.User;
-                SaveNickname(m_MainUI.m_nickNameField);
-                Debug.Log("회원가입 성공: " + newUser.UserId);
-            }
+
+            FirebaseUser newUser = task.Result.User;
+            InitUserData(newUser.UserId);
+
+            Debug.Log("회원가입 성공: " + newUser.UserId);
+
+            nicknamePanel.SetActive(true);
         });
     }
     #endregion
@@ -146,6 +148,8 @@ public class AuthManager : MonoBehaviour
                 {
                     CurrentNickname = nickname;
                     Debug.Log("닉네임 저장");
+
+                    nicknamePanel.SetActive(false);
                 }
                 else
                     Debug.Log("닉네임 저장 실패" + task.Exception);

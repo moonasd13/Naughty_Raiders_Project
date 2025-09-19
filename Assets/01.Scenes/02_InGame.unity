@@ -34843,10 +34843,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1136979083}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 100, y: 40}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -65, y: -50}
+  m_SizeDelta: {x: 100, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1106649388
 CanvasRenderer:
@@ -34889,7 +34889,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: 1000
 --- !u!1001 &1107814701
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44746,13 +44746,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 4
     m_MaxSize: 40
-    m_Alignment: 3
+    m_Alignment: 5
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: Nick
 --- !u!222 &1413456203
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -44775,9 +44775,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1136979083}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 100, y: 100}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -200, y: -50}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1414669782
@@ -57633,6 +57633,7 @@ MonoBehaviour:
   downButton: {fileID: 1292653458}
   gunImage: {fileID: 1249318255}
   speedImage: {fileID: 117662094}
+  coinImage: {fileID: 1591282878}
   m_curGold: 0
   m_nickName: 
   playerListParent: {fileID: 730082387}
