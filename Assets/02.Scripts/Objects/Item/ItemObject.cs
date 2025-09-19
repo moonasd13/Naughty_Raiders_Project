@@ -11,7 +11,7 @@ public class ItemObject : NetworkBehaviour
     
     ItemKind item_kind;
     Bullet codebullet;
-    private bool _isPlayerInZone = false;
+    //private bool _isPlayerInZone = false;
     private PlayerController _firstPlayerController;
 
     private void Start()
@@ -38,7 +38,7 @@ public class ItemObject : NetworkBehaviour
             PlayerController controller = other.GetComponent<PlayerController>();
             if (controller != null)
             {
-                _isPlayerInZone = true;
+                //_isPlayerInZone = true;
                 _firstPlayerController = controller;
             }
         }
@@ -50,8 +50,8 @@ public class ItemObject : NetworkBehaviour
             PlayerController controller = other.GetComponent<PlayerController>();
             if (controller == _firstPlayerController)
             {
-                _isPlayerInZone = false;
-                _firstPlayerController = null;
+                //_isPlayerInZone = false;
+                //_firstPlayerController = null;
             }
         }
     }

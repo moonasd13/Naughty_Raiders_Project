@@ -8,7 +8,7 @@ public class Coin : NetworkBehaviour
     [SerializeField]
     public Collider _senseZone;
 
-    private bool _isPlayerInZone = false;
+    //private bool _isPlayerInZone = false;
     private PlayerController _firstPlayerController;
 
     private void OnTriggerEnter(Collider other)
@@ -18,7 +18,7 @@ public class Coin : NetworkBehaviour
             PlayerController controller = other.GetComponent<PlayerController>();
             if (controller != null)
             {
-                _isPlayerInZone = true;
+                //_isPlayerInZone = true;
                 _firstPlayerController = controller;
 
             }
@@ -32,7 +32,7 @@ public class Coin : NetworkBehaviour
             PlayerController controller = other.GetComponent<PlayerController>();
             if (controller == _firstPlayerController)
             {
-                _isPlayerInZone = false;
+                //_isPlayerInZone = false;
                 _firstPlayerController = null;
             }
         }
@@ -51,17 +51,17 @@ public class Coin : NetworkBehaviour
     /// 서버에게 실질적으로 수행해야하는 RPC전송
     /// </summary>
     /// <param name="requestingClientId"></param>
-    [ServerRpc(RequireOwnership = false)]
-    private void RequestPickupServerRpc(ulong requestingClientId)
-    {
-        if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
-            return;
+    //[ServerRpc(RequireOwnership = false)]
+    //private void RequestPickupServerRpc(ulong requestingClientId)
+    //{
+    //    if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
+    //        return;
 
-        //if (_firstPlayerController.inHand.Value || !_isPlayerInZone)
-        //    return;
+    //    //if (_firstPlayerController.inHand.Value || !_isPlayerInZone)
+    //    //    return;
 
-        //_firstPlayerController.inHand.Value = true;
+    //    //_firstPlayerController.inHand.Value = true;
 
-        GetComponent<NetworkObject>().Despawn(true);
-    }
+    //    GetComponent<NetworkObject>().Despawn(true);
+    //}
 }

@@ -30,12 +30,4 @@ public class PlayerManager : NetworkBehaviour
             _camera.Follow = CameraRoot.transform;
         }
     }
-
-    private void LateUpdate()
-    {
-        if (CameraRoot != null)
-        {
-            CameraRoot.transform.rotation = Quaternion.identity; // (0,0,0) 회전으로 고정
-        }
-    }
 }

@@ -1,45 +1,32 @@
-using System.Globalization;
+using StarterAssets;
 using Unity.Netcode;
 using UnityEngine;
 
+
 public class AnimationSync : NetworkBehaviour
 {
+    public ThirdPersonController _thirdPersonController;
     public Animator _animator;
 
-    private NetworkVariable<float> netSpeed = new NetworkVariable<float>();
-    private NetworkVariable<bool> netGrounded = new NetworkVariable<bool>();
-    private NetworkVariable<bool> netJump = new NetworkVariable<bool>();
-    private NetworkVariable<bool> netFreeFall = new NetworkVariable<bool>();
-    private NetworkVariable<float> netMotion = new NetworkVariable<float>();
+    private int _animIDSpeed;
+    private int _animIDGrounded;
 
-    private int _animIDSpeed = Animator.StringToHash("Speed");
-    private int _animIDGrounded = Animator.StringToHash("Grounded");
-    private int _animIDJump = Animator.StringToHash("Jump");
-    private int _animIDFreeFall = Animator.StringToHash("FreeFall");
-    private int _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
-
-    private void Start()
+    void Awake()
     {
-        // 네트워크 변수 값이 바뀌면 Animator 업데이트
-        netSpeed.OnValueChanged += (oldVal, newVal) => _animator.SetFloat(_animIDSpeed, newVal);
-        netGrounded.OnValueChanged += (oldVal, newVal) => _animator.SetBool(_animIDGrounded, newVal);
-        netJump.OnValueChanged += (oldVal, newVal) => _animator.SetBool(_animIDJump, newVal);
-        netFreeFall.OnValueChanged += (oldVal, newVal) => _animator.SetBool(_animIDFreeFall, newVal);
-        netMotion.OnValueChanged += (oldVal, newVal) => _animator.SetFloat(_animIDMotionSpeed, newVal);
+
+        _animIDSpeed = Animator.StringToHash("Speed");
+        _animIDGrounded = Animator.StringToHash("Grounded");
     }
 
-    /// <summary>
-    /// 오너만 자신의 애니메이션 상태를 네트워크로 전송
-    /// </summary>
-    public void SetAnimatorValues(float speed, bool grounded, bool jump, bool freeFall, float motion)
+    void Update()
     {
-        if (!IsOwner) return;
+        if (_thirdPersonController == null || _animator == null) return;
 
-        netSpeed.Value = speed;
-        netGrounded.Value = grounded;
-        netJump.Value = jump;
-        netFreeFall.Value = freeFall;
-        netMotion.Value = motion;
+        // 1. Public 변수 직접 읽기
+        bool isGrounded = _thirdPersonController.Grounded;
+
+        // 2. Private 변수 대신 Animator 파라미터 값 읽기
+        float currentSpeed = _animator.GetFloat(_animIDSpeed);
+        bool isAnimatorGrounded = _animator.GetBool(_animIDGrounded);
     }
 }
-
