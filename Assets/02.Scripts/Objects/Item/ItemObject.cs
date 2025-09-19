@@ -58,10 +58,10 @@ public class ItemObject : NetworkBehaviour
 
     private void Update()
     {
-        if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.equip.Value == false)
-        {
-            RequestPickupServerRpc(NetworkManager.LocalClientId);
-        }
+        //if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.equip.Value == false)
+        //{
+        //    RequestPickupServerRpc(NetworkManager.LocalClientId);
+        //}
     }
 
     /// <summary>
@@ -74,11 +74,11 @@ public class ItemObject : NetworkBehaviour
         if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
             return;
 
-        if (_firstPlayerController.equip.Value || !_isPlayerInZone)
-            return;
+        //if (_firstPlayerController.equip.Value || !_isPlayerInZone)
+        //    return;
 
-        _firstPlayerController.equip.Value = true;
-        _firstPlayerController.GetItemKind(item_kind);
+        //_firstPlayerController.equip.Value = true;
+        //_firstPlayerController.GetItemKind(item_kind);
 
         if (this.CompareTag("Item_Gun"))
         {

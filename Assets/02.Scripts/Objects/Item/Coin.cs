@@ -41,10 +41,10 @@ public class Coin : NetworkBehaviour
     private void Update()
     {
         // 물건을 잡을수 있는 조건
-        if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.inHand.Value == false)
-        {
-            RequestPickupServerRpc(NetworkManager.LocalClientId);
-        }
+        //if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.inHand.Value == false)
+        //{
+        //    RequestPickupServerRpc(NetworkManager.LocalClientId);
+        //}
     }
 
     /// <summary>
@@ -57,10 +57,10 @@ public class Coin : NetworkBehaviour
         if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
             return;
 
-        if (_firstPlayerController.inHand.Value || !_isPlayerInZone)
-            return;
+        //if (_firstPlayerController.inHand.Value || !_isPlayerInZone)
+        //    return;
 
-        _firstPlayerController.inHand.Value = true;
+        //_firstPlayerController.inHand.Value = true;
 
         GetComponent<NetworkObject>().Despawn(true);
     }

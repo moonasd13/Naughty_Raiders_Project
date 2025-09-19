@@ -53,17 +53,17 @@ public class RoomItemBox : NetworkBehaviour
 
         if (controller == null) return;
 
-        if (controller.inHand.Value)
-        {
-            controller.inHand.Value = false;
-            boxCount.Value++;
-            SendGoldToClientRpc(clientId, rewardPerBox);
-        }
-        else if (!controller.inHand.Value && boxCount.Value > 0)
-        {
-            controller.inHand.Value = true;
-            boxCount.Value--;
-        }
+        //if (controller.inHand.Value)
+        //{
+        //    controller.inHand.Value = false;
+        //    boxCount.Value++;
+        //    SendGoldToClientRpc(clientId, rewardPerBox);
+        //}
+        //else if (!controller.inHand.Value && boxCount.Value > 0)
+        //{
+        //    controller.inHand.Value = true;
+        //    boxCount.Value--;
+        //}
     }
 
     [ClientRpc]

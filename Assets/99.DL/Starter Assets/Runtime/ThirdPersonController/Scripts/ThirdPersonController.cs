@@ -131,6 +131,7 @@ namespace StarterAssets
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
+            Debug.Log("서드 플레이어 기동");
         }
 
         private void Start()

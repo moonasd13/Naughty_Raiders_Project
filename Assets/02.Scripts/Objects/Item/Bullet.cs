@@ -51,7 +51,7 @@ public class Bullet : NetworkBehaviour
             if (controller != null)
             {
                 _firstPlayerController = controller;
-                _firstPlayerController.stunON();
+                //_firstPlayerController.stunON();
             }
         }
 

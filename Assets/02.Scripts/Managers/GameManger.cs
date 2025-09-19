@@ -138,7 +138,7 @@ public class GameManger : NetworkBehaviour
         Room03_Score = 0;
         Room04_Score = 0;
         
-        itemSpawner.SpawnerOn();
+        //itemSpawner.SpawnerOn();
 
         // 모든 플레이어 골드 초기화
         DatabaseManager.Instance.ResetAllPlayersGold();

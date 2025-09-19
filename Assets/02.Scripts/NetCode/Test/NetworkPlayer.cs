@@ -24,6 +24,8 @@ public class NetworkPlayer : NetworkBehaviour
 
             transform.SetPositionAndRotation(spawnPos, spawnRot);
         }
+
+        Debug.Log("»ý¼º");
     }
 
     public override void OnNetworkDespawn()
