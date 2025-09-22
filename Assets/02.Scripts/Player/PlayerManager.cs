@@ -7,10 +7,6 @@ using UnityEngine.InputSystem;
 public class PlayerManager : NetworkBehaviour
 {
     [Header("플레이어 코드")]
-    public ThirdPersonController ThirdPersonController;
-    public PlayerInput PlayerInput;
-    public StarterAssetsInputs Inputs;
-    public AnimationSync AnimationSync;
     public GameObject CameraRoot;
 
     private CinemachineCamera _camera;
@@ -20,9 +16,6 @@ public class PlayerManager : NetworkBehaviour
     {
         if (!IsOwner)
         {
-            ThirdPersonController.enabled = false;
-            PlayerInput.enabled = false;
-            Inputs.enabled = false;
         }
         else
         {

@@ -131,20 +131,6 @@ namespace StarterAssets
         private bool _hasAnimator;
         public bool _isStun { get; set; } = false;
 
-
-        ////        private bool IsCurrentDeviceMouse
-        ////        {
-        ////            get
-        ////            {
-        ////#if ENABLE_INPUT_SYSTEM
-        ////                return _playerInput.currentControlScheme == "KeyboardMouse";
-        ////#else
-        ////				return false;
-        ////#endif
-        ////            }
-        ////        }
-
-
         //        private void Awake()
         //        {
         //            // get a reference to our main camera
@@ -359,66 +345,66 @@ namespace StarterAssets
         //        /// <summary>
         //        /// 움직임
         //        /// </summary>
-        //        private void Move()
-        //        {
-        //            //DebugUIManager.Instance?.Log("Move() called by: " + OwnerClientId);
-        //            //// set target speed based on move speed, sprint speed and if sprint is pressed
-        //            //float targetSpeed = _input.sprint ? SprintSpeed.Value : MoveSpeed.Value;
+        //private void Move()
+        //{
+        //    DebugUIManager.Instance?.Log("Move() called by: " + OwnerClientId);
+        //    // set target speed based on move speed, sprint speed and if sprint is pressed
+        //    float targetSpeed = _input.sprint ? SprintSpeed.Value : MoveSpeed.Value;
 
-        //            //// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
+        //    // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
-        //            //// note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
-        //            //// if there is no input, set the target speed to 0
-        //            //if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+        //    // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
+        //    // if there is no input, set the target speed to 0
+        //    if (_input.move == Vector2.zero) targetSpeed = 0.0f;
 
-        //            //// a reference to the players current horizontal velocity
-        //            //float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
+        //    // a reference to the players current horizontal velocity
+        //    float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
-        //            //float speedOffset = 0.1f;
-        //            //float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
+        //    float speedOffset = 0.1f;
+        //    float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
 
-        //            //// accelerate or decelerate to target speed
-        //            //if (currentHorizontalSpeed < targetSpeed - speedOffset || currentHorizontalSpeed > targetSpeed + speedOffset)
-        //            //{
-        //            //    // creates curved result rather than a linear one giving a more organic speed change
-        //            //    // note T in Lerp is clamped, so we don't need to clamp our speed
-        //            //    _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
+        //    // accelerate or decelerate to target speed
+        //    if (currentHorizontalSpeed < targetSpeed - speedOffset || currentHorizontalSpeed > targetSpeed + speedOffset)
+        //    {
+        //        // creates curved result rather than a linear one giving a more organic speed change
+        //        // note T in Lerp is clamped, so we don't need to clamp our speed
+        //        _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
 
-        //            //    // round speed to 3 decimal places
-        //            //    _speed = Mathf.Round(_speed * 1000f) / 1000f;
-        //            //}
-        //            //else
-        //            //{
-        //            //    _speed = targetSpeed;
-        //            //}
+        //        // round speed to 3 decimal places
+        //        _speed = Mathf.Round(_speed * 1000f) / 1000f;
+        //    }
+        //    else
+        //    {
+        //        _speed = targetSpeed;
+        //    }
 
-        //            //// normalise input direction
-        //            //Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+        //    // normalise input direction
+        //    Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
 
-        //            //// note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
-        //            //// if there is a move input rotate player when the player is moving
-        //            //if (_input.move != Vector2.zero)
-        //            //{
-        //            //    // move
-        //            //    inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
-        //            //}
+        //    // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
+        //    // if there is a move input rotate player when the player is moving
+        //    if (_input.move != Vector2.zero)
+        //    {
+        //        // move
+        //        inputDirection = transform.right * _input.move.x + transform.forward * _input.move.y;
+        //    }
 
-        //            //// move the player
-        //            //_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+        //    // move the player
+        //    _controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
-        //            //// inputMagnitude 계산 후에 블렌딩 업데이트
-        //            //inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
+        //    // inputMagnitude 계산 후에 블렌딩 업데이트
+        //    inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
 
-        //            //_animationBlend = Mathf.Lerp(_animationBlend, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
-        //            //if (_animationBlend < 0.01f) _animationBlend = 0f;
+        //    _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed * inputMagnitude, Time.deltaTime * SpeedChangeRate);
+        //    if (_animationBlend < 0.01f) _animationBlend = 0f;
 
-        //            //// update animator if using character
-        //            //if (_hasAnimator)
-        //            //{
-        //            //    _animator.SetFloat(_animIDSpeed, _animationBlend);
-        //            //    _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
-        //            //}
-        //        }
+        //    // update animator if using character
+        //    if (_hasAnimator)
+        //    {
+        //        _animator.SetFloat(_animIDSpeed, _animationBlend);
+        //        _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+        //    }
+        //}
 
         //        /// <summary>
         //        /// 점프
