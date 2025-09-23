@@ -1,67 +1,31 @@
-using StarterAssets;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Coin : NetworkBehaviour
 {
-    [SerializeField]
-    public Collider _senseZone;
+    private PlayerMove _playerController;
 
-    //private bool _isPlayerInZone = false;
-    private PlayerController _firstPlayerController;
-
-    private void OnTriggerEnter(Collider other)
+    public void GetCoin(PlayerMove player)
     {
-        if (other.CompareTag("Player") && _firstPlayerController == null)
+        _playerController = player;
+        
+        if (_playerController.inHand.Value == false)
         {
-            PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller != null)
-            {
-                //_isPlayerInZone = true;
-                _firstPlayerController = controller;
-
-            }
+            RequestPickupServerRpc();
         }
     }
 
-    private void OnTriggerExit(Collider other)
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestPickupServerRpc(ServerRpcParams rpcParams = default)
     {
-        if (other.CompareTag("Player"))
-        {
-            PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller == _firstPlayerController)
-            {
-                //_isPlayerInZone = false;
-                _firstPlayerController = null;
-            }
-        }
+        ulong requestingClientId = rpcParams.Receive.SenderClientId;
+
+        if (_playerController.OwnerClientId != requestingClientId)
+            return;
+
+        _playerController.inHand.Value = true;
+
+        GetComponent<NetworkObject>().Despawn(true);
     }
-
-    private void Update()
-    {
-        // 물건을 잡을수 있는 조건
-        //if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.inHand.Value == false)
-        //{
-        //    RequestPickupServerRpc(NetworkManager.LocalClientId);
-        //}
-    }
-
-    /// <summary>
-    /// 서버에게 실질적으로 수행해야하는 RPC전송
-    /// </summary>
-    /// <param name="requestingClientId"></param>
-    //[ServerRpc(RequireOwnership = false)]
-    //private void RequestPickupServerRpc(ulong requestingClientId)
-    //{
-    //    if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
-    //        return;
-
-    //    //if (_firstPlayerController.inHand.Value || !_isPlayerInZone)
-    //    //    return;
-
-    //    //_firstPlayerController.inHand.Value = true;
-
-    //    GetComponent<NetworkObject>().Despawn(true);
-    //}
 }

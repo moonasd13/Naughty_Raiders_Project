@@ -6,17 +6,23 @@ using Define_Enums;
 
 public class ItemObject : NetworkBehaviour
 {
-    [SerializeField]
-    public Collider _senseZone;
-    
+    [Header("Rotation Settings")]
+    public float rotationSpeed = 45f;
+
+    [Header("Floating Settings")]
+    public float floatAmplitude = 0.25f;
+    public float floatFrequency = 1f;
+
+    private Vector3 _startPosition;
+
     ItemKind item_kind;
     Bullet codebullet;
-    //private bool _isPlayerInZone = false;
-    private PlayerController _firstPlayerController;
+
+    private PlayerMove _playerController;
 
     private void Start()
     {
-        if(this.CompareTag("Item_Gun"))
+        if (this.CompareTag("Item_Gun"))
         {
             item_kind = ItemKind.Gun;
         }
@@ -28,40 +34,31 @@ public class ItemObject : NetworkBehaviour
         {
             Debug.Log("아이템 태그 없음");
         }
+    }
+    void Update()
+    {
+        if (!IsServer) return;
 
+        Rotate();
+        FloatUpAndDown();
     }
 
-    private void OnTriggerEnter(Collider other)
+    public override void OnNetworkSpawn()
     {
-        if (other.CompareTag("Player") && _firstPlayerController == null)
+        if (IsServer)
         {
-            PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller != null)
-            {
-                //_isPlayerInZone = true;
-                _firstPlayerController = controller;
-            }
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller == _firstPlayerController)
-            {
-                //_isPlayerInZone = false;
-                //_firstPlayerController = null;
-            }
+            _startPosition = transform.position;
         }
     }
 
-    private void Update()
+    public void Getitem(PlayerMove player)
     {
-        //if (IsClient && _isPlayerInZone && _firstPlayerController != null && Input.GetKeyDown(KeyCode.E) && _firstPlayerController.equip.Value == false)
-        //{
-        //    RequestPickupServerRpc(NetworkManager.LocalClientId);
-        //}
+        _playerController = player;
+
+        if (_playerController.equip.Value == false)
+        {
+            RequestPickupServerRpc();
+        }
     }
 
     /// <summary>
@@ -69,16 +66,15 @@ public class ItemObject : NetworkBehaviour
     /// </summary>
     /// <param name="requestingClientId"></param>
     [ServerRpc(RequireOwnership = false)]
-    private void RequestPickupServerRpc(ulong requestingClientId)
+    private void RequestPickupServerRpc(ServerRpcParams rpcParams = default)
     {
-        if (_firstPlayerController == null || _firstPlayerController.OwnerClientId != requestingClientId)
+        ulong requestingClientId = rpcParams.Receive.SenderClientId;
+
+        if (_playerController.OwnerClientId != requestingClientId)
             return;
 
-        //if (_firstPlayerController.equip.Value || !_isPlayerInZone)
-        //    return;
-
-        //_firstPlayerController.equip.Value = true;
-        //_firstPlayerController.GetItemKind(item_kind);
+        _playerController.my_ItemKind.Value = item_kind;
+        _playerController.equip.Value = true;
 
         if (this.CompareTag("Item_Gun"))
         {
@@ -86,14 +82,28 @@ public class ItemObject : NetworkBehaviour
         }
         else if (this.CompareTag("Item_Speed"))
         {
-            if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Speed"); 
+            if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Speed");
         }
 
-            GetComponent<NetworkObject>().Despawn(true);
-
+        GetComponent<NetworkObject>().Despawn(true);
     }
 
+    /// <summary>
+    /// 아이템 회전
+    /// </summary>
+    private void Rotate()
+    {
+        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
+    }
 
+    /// <summary>
+    /// 아이템 업다운
+    /// </summary>
+    private void FloatUpAndDown()
+    {
+        float newY = _startPosition.y + Mathf.Sin(Time.time * floatFrequency) * floatAmplitude;
+        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+    }
 
     /// <summary>
     /// 자식에게 상속
@@ -104,6 +114,4 @@ public class ItemObject : NetworkBehaviour
     {
         Debug.Log("부모 아이템은 기본 사용 기능 없음");
     }
-
-
 }

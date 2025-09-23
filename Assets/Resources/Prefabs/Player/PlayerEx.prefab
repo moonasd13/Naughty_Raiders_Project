@@ -2307,6 +2307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  PlayerMove: {fileID: 1792269705540713356}
   CameraRoot: {fileID: 3109831264852090867}
 --- !u!114 &1792269705540713356
 MonoBehaviour:
@@ -2344,6 +2345,8 @@ MonoBehaviour:
   BottomClamp: -30
   CameraAngleOverride: 0
   LockCameraPosition: 0
+  AnimationBlend:
+    m_InternalValue: 0
 --- !u!1 &7817243373240972138
 GameObject:
   m_ObjectHideFlags: 0

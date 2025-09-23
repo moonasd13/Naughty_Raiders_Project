@@ -1,4 +1,6 @@
 using Unity.Netcode;
+using Define_Enums;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMove : NetworkBehaviour
@@ -56,11 +58,21 @@ public class PlayerMove : NetworkBehaviour
 
     private bool _hasAnimator;
 
-    public NetworkVariable<float> AnimationBlend = new NetworkVariable<float>(
-    0f,
-    NetworkVariableReadPermission.Everyone,
-    NetworkVariableWritePermission.Owner
-);
+    public NetworkVariable<ItemKind>  my_ItemKind = new NetworkVariable<ItemKind>(ItemKind.None, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    [Header("NetworkVariable")]
+    public NetworkVariable<float> AnimationBlend = new NetworkVariable<float>( 0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+    public NetworkVariable<bool> equip = new NetworkVariable<bool>( false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<bool> _isStun = new NetworkVariable<bool>( false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<bool> inHand = new NetworkVariable<bool>( false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<bool> in_action = new NetworkVariable<bool>( false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+ 
+    public NetworkVariable<bool> hide = new NetworkVariable<bool>( false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
 
     private void Awake()
     {
@@ -84,22 +96,49 @@ public class PlayerMove : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        // 입력 수집
-        float horizontal = 0f;
-        float vertical = 0f;
-        if (Input.GetKey(KeyCode.W)) vertical += 1f;
-        if (Input.GetKey(KeyCode.S)) vertical -= 1f;
-        if (Input.GetKey(KeyCode.D)) horizontal += 1f;
-        if (Input.GetKey(KeyCode.A)) horizontal -= 1f;
+        if (!_isStun.Value)
+        {
+            // 입력 수집
+            float horizontal = 0f;
+            float vertical = 0f;
+            if (Input.GetKey(KeyCode.W)) vertical += 1f;
+            if (Input.GetKey(KeyCode.S)) vertical -= 1f;
+            if (Input.GetKey(KeyCode.D)) horizontal += 1f;
+            if (Input.GetKey(KeyCode.A)) horizontal -= 1f;
 
-        Vector2 moveInput = new Vector2(horizontal, vertical).normalized;
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift);
+            Vector2 moveInput = new Vector2(horizontal, vertical).normalized;
+            bool isSprinting = Input.GetKey(KeyCode.LeftShift);
+            Move(moveInput, isSprinting);
+            JumpAndGravity();
 
-        // 로컬 이동 & 애니메이션 계산
-        JumpAndGravity();
+            /// 아이템 사용
+            if (equip.Value && UnityEngine.Input.GetKeyDown(KeyCode.F))
+            {
+                switch (my_ItemKind.Value)
+                {
+                    case ItemKind.Gun:
+                        //ShootiongaAnimation();
+                        if (GameUI.Instance != null) GameUI.Instance.HideItem("Gun"); // 사용 후 UI 비활성화
+                        break;
+
+                    case ItemKind.Speed:
+                        //UseSpeedItem(1.3f);
+                        if (GameUI.Instance != null) GameUI.Instance.HideItem("Speed"); // 사용 후 UI 비활성화
+                        break;
+
+                    default:
+                        return;
+                }
+            }
+
+            /// 상호작용
+            if (UnityEngine.Input.GetKeyDown(KeyCode.E))
+            {
+                TryInteractWithNearbyBox();
+            }
+        }
+
         GroundedCheck();
-        Move(moveInput, isSprinting);
-
     }
 
     private void LateUpdate()
@@ -246,6 +285,47 @@ public class PlayerMove : NetworkBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+        }
+    }
+
+    /// <summary>
+    /// 레이케스트를 이용한 상자찾기, 상자 상호작용
+    /// </summary>
+    private void TryInteractWithNearbyBox()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, 2.5f); // 범위 내 상자 찾기
+        foreach (var hit in hits)
+        {
+            RoomItemBox box = hit.GetComponent<RoomItemBox>();
+            Obj_Cabinet cabinet = hit.GetComponent<Obj_Cabinet>();
+            Coin coin = hit.GetComponent<Coin>();
+            ItemObject item = hit.GetComponent<ItemObject>();
+
+
+            if (box != null)
+            {
+                box.SubmitInteractServerRpc(OwnerClientId);
+                break;
+            }
+
+            if (cabinet != null)
+            {
+                //cabinet.Interact();
+                break;
+            }
+            
+            if (coin != null)
+            {
+                coin.GetCoin(this);
+                break;
+            }
+
+            if (item != null)
+            {
+                item.Getitem(this);
+                break;
+            }
+
         }
     }
 
