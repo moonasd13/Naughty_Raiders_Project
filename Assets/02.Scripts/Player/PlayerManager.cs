@@ -17,7 +17,6 @@ public class PlayerManager : NetworkBehaviour
     {
         if (!IsOwner)
         {
-            PlayerMove.enabled = false;
         }
         else
         {

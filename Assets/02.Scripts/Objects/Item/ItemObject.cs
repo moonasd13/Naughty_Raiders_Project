@@ -16,6 +16,7 @@ public class ItemObject : NetworkBehaviour
     private Vector3 _startPosition;
 
     ItemKind item_kind;
+    public bool equip = false;
     Bullet codebullet;
 
     private PlayerMove _playerController;
@@ -39,8 +40,11 @@ public class ItemObject : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        Rotate();
-        FloatUpAndDown();
+        if(!equip)
+        {
+            Rotate();
+            FloatUpAndDown();
+        }
     }
 
     public override void OnNetworkSpawn()
@@ -70,22 +74,39 @@ public class ItemObject : NetworkBehaviour
     {
         ulong requestingClientId = rpcParams.Receive.SenderClientId;
 
-        if (_playerController.OwnerClientId != requestingClientId)
+        NetworkObject playerObject = NetworkManager.Singleton.ConnectedClients[requestingClientId].PlayerObject;
+        PlayerMove playerController = playerObject.GetComponent<PlayerMove>();
+
+        if (playerController == null)
+        {
+            Debug.LogError("PlayerController 못 찾음!");
             return;
+        }
+
+        _playerController = playerController; // 안전하게 저장
 
         _playerController.my_ItemKind.Value = item_kind;
         _playerController.equip.Value = true;
 
-        if (this.CompareTag("Item_Gun"))
-        {
-            if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Gun");
-        }
-        else if (this.CompareTag("Item_Speed"))
-        {
-            if (IsOwner && GameUI.Instance != null) GameUI.Instance.ShowItem("Speed");
-        }
+        ShowItemClientRpc(item_kind);
 
         GetComponent<NetworkObject>().Despawn(true);
+    }
+
+    [ClientRpc]
+    private void ShowItemClientRpc(ItemKind kind)
+    {
+        if (GameUI.Instance == null) return;
+
+        switch (kind)
+        {
+            case ItemKind.Gun:
+                GameUI.Instance.ShowItem("Gun");
+                break;
+            case ItemKind.Speed:
+                GameUI.Instance.ShowItem("Speed");
+                break;
+        }
     }
 
     /// <summary>

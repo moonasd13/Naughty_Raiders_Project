@@ -1,12 +1,12 @@
 using Unity.Netcode;
 using Define_Enums;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMove : NetworkBehaviour
 {
     [SerializeField] public CharacterController _controller;
     [SerializeField] public Animator _animator;
+    [SerializeField] public PlayerItem PlayerItem;
     private GameObject _mainCamera;
 
     [Header("Player")]
@@ -58,10 +58,11 @@ public class PlayerMove : NetworkBehaviour
 
     private bool _hasAnimator;
 
-    public NetworkVariable<ItemKind>  my_ItemKind = new NetworkVariable<ItemKind>(ItemKind.None, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [Header("NetworkVariable")]
-    public NetworkVariable<float> AnimationBlend = new NetworkVariable<float>( 0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    //public NetworkVariable<float> AnimationBlend = new NetworkVariable<float>( 0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<ItemKind> my_ItemKind = new NetworkVariable<ItemKind>(ItemKind.None, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public NetworkVariable<bool> equip = new NetworkVariable<bool>( false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -69,9 +70,9 @@ public class PlayerMove : NetworkBehaviour
 
     public NetworkVariable<bool> inHand = new NetworkVariable<bool>( false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    public NetworkVariable<bool> in_action = new NetworkVariable<bool>( false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
- 
-    public NetworkVariable<bool> hide = new NetworkVariable<bool>( false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> in_action = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<bool> hide = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
 
     private void Awake()
@@ -114,21 +115,7 @@ public class PlayerMove : NetworkBehaviour
             /// 아이템 사용
             if (equip.Value && UnityEngine.Input.GetKeyDown(KeyCode.F))
             {
-                switch (my_ItemKind.Value)
-                {
-                    case ItemKind.Gun:
-                        //ShootiongaAnimation();
-                        if (GameUI.Instance != null) GameUI.Instance.HideItem("Gun"); // 사용 후 UI 비활성화
-                        break;
-
-                    case ItemKind.Speed:
-                        //UseSpeedItem(1.3f);
-                        if (GameUI.Instance != null) GameUI.Instance.HideItem("Speed"); // 사용 후 UI 비활성화
-                        break;
-
-                    default:
-                        return;
-                }
+                PlayerItem.Useitem(this);
             }
 
             /// 상호작용
@@ -145,8 +132,9 @@ public class PlayerMove : NetworkBehaviour
     {
         if (_hasAnimator)
         {
-            _animator.SetFloat(_animIDSpeed, AnimationBlend.Value);
+            //_animator.SetFloat(_animIDSpeed, AnimationBlend.Value);
         }
+        // 서버 RPO를 이용한 동기화 호스트일때 오너와 클라이언트일경우에 오너가 다르게 한다. 서버가 모든것을 하게하고 클라이언트는 자신의 것만 동기화하게한다.
 
         if (!IsOwner)
         {
@@ -226,7 +214,7 @@ public class PlayerMove : NetworkBehaviour
         _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
         if (_animationBlend < 0.01f) _animationBlend = 0f;
 
-        AnimationBlend.Value = _animationBlend; // 여기서 네트워크로 자동 동기화됨
+        //AnimationBlend.Value = _animationBlend; // 여기서 네트워크로 자동 동기화됨
 
 
         Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
@@ -328,6 +316,41 @@ public class PlayerMove : NetworkBehaviour
 
         }
     }
+
+    #region[액션 자동화]
+    private void OnEnable()
+    {
+        in_action.OnValueChanged += OnActionValueChanged;
+    }
+
+    private void OnDisable()
+    {
+        in_action.OnValueChanged -= OnActionValueChanged;
+    }
+
+    private void OnActionValueChanged(bool previousValue, bool newValue)
+    {
+        if (!previousValue && newValue)
+        {
+            DoAction();
+        }
+        else if (previousValue && !newValue)
+        {
+            CancelAction();
+        }
+    }
+
+    private void DoAction()
+    {
+        _animator.SetBool("Shooting", true);
+    }
+
+    private void CancelAction()
+    {
+        _animator.SetBool("Shooting", false);
+    }
+
+    #endregion
 
 
     #region[발소리]
