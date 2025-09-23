@@ -20,6 +20,8 @@ public class GameTimer : NetworkBehaviour
 
     public event Action OnTimerEnded; // 로컬 이벤트(클라/서버 공통)
 
+    public float MaxTime => matchDurationSeconds;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
