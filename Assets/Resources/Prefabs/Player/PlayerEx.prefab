@@ -2054,6 +2054,7 @@ GameObject:
   - component: {fileID: 6321423533459783289}
   - component: {fileID: 5336016695724793910}
   - component: {fileID: 1792269705540713356}
+  - component: {fileID: 8780237663583296643}
   m_Layer: 7
   m_Name: PlayerEx
   m_TagString: Player
@@ -2324,6 +2325,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _controller: {fileID: 8636134767333864747}
   _animator: {fileID: 1984439841010743381}
+  PlayerItem: {fileID: 8780237663583296643}
   MoveSpeed:
     m_InternalValue: 2
   SprintSpeed:
@@ -2347,6 +2349,33 @@ MonoBehaviour:
   LockCameraPosition: 0
   AnimationBlend:
     m_InternalValue: 0
+  my_ItemKind:
+    m_InternalValue: 0
+  equip:
+    m_InternalValue: 0
+  _isStun:
+    m_InternalValue: 0
+  inHand:
+    m_InternalValue: 0
+  in_action:
+    m_InternalValue: 0
+  hide:
+    m_InternalValue: 0
+--- !u!114 &8780237663583296643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7606017032670939103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8678744cd817be4199d750efee098e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  righthandTransform: {fileID: 2984970416062854485}
+  _gun: {fileID: 6542153327835142291, guid: 47340b6f31cc54a4098c466b964ff58f, type: 3}
 --- !u!1 &7817243373240972138
 GameObject:
   m_ObjectHideFlags: 0

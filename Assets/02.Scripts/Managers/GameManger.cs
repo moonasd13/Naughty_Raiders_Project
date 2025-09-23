@@ -164,7 +164,7 @@ public class GameManger : NetworkBehaviour
     {
         foreach (NetworkPlayer player in NetworkPlayer.AllPlayers)
         {
-            PlayerController playerCon = player.GetComponent<PlayerController>();
+            PlayerMove playerCon = player.GetComponent<PlayerMove>();
             ulong targetClientId = player.OwnerClientId;
 
             if (playerCon != null)
@@ -189,7 +189,7 @@ public class GameManger : NetworkBehaviour
     }
 
     // 컨트롤러 재 화성화 코루틴
-    private IEnumerator ReenableNextFrame(PlayerController playerCon, CharacterController controller, ulong clientId, Vector3 targetPos)
+    private IEnumerator ReenableNextFrame(PlayerMove playerCon, CharacterController controller, ulong clientId, Vector3 targetPos)
     {
         yield return null; // 한 프레임 대기
 
