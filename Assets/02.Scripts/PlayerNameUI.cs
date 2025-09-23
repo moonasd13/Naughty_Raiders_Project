@@ -58,4 +58,9 @@ public class PlayerNameUI : NetworkBehaviour
     {
         playerName.Value = newName;
     }
+    public string GetPlayerName()
+    {
+        return playerName.Value.ToString();
+    }
+
 }
