@@ -441,10 +441,33 @@ public class PlayerMove : NetworkBehaviour
 
         Destroy(_item.gameObject);
     }
-#endregion
 
-#region[발소리]
-private void OnFootstep(AnimationEvent animationEvent)
+    /// <summary>
+    /// 텔레포트
+    /// </summary>
+    /// <param name="animationEvent"></param>
+    [ClientRpc]
+    public void TeleportTargetClientRpc(Vector3 targetPos, Quaternion targetRot)
+    {
+        // 로직은 그대로
+        var controller = GetComponent<CharacterController>();
+        if (controller != null) controller.enabled = false;
+
+        transform.SetPositionAndRotation(targetPos, targetRot);
+
+        StartCoroutine(ReenableControllerNextFrame(controller));
+    }
+
+    // PlayerMove.cs 내부에 정의
+    private IEnumerator ReenableControllerNextFrame(CharacterController controller)
+    {
+        yield return null; // 한 프레임 대기
+        if (controller != null) controller.enabled = true;
+    }
+    #endregion
+
+    #region[발소리]
+    private void OnFootstep(AnimationEvent animationEvent)
     {
         if (animationEvent.animatorClipInfo.weight > 0.5f)
         {

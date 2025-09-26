@@ -24,16 +24,6 @@ public class GameManger : NetworkBehaviour
     private bool is_GateOpen = false;
     private float currentTime;
 
-
-    /// <summary>
-    /// 상자 카운팅용 변수
-    /// </summary>
-    private int Room01_Score = 0;
-    private int Room02_Score = 0;
-    private int Room03_Score = 0;
-    private int Room04_Score = 0;
-    private bool countingEnd = false;
-
     private NetworkVariable<GameState> NowGameState = new NetworkVariable<GameState>(
      GameState.Redy,
      NetworkVariableReadPermission.Everyone,
@@ -97,47 +87,10 @@ public class GameManger : NetworkBehaviour
     }
 
     /// <summary>
-    /// 점수 계산
-    /// </summary>
-    private void ScoreCounting()
-    {
-        int[] scores = new int[4];
-
-        for (int i = 0; i < Room_Chests.Length; i++)
-        {
-            foreach (Transform child in Room_Chests[i].transform)
-            {
-                RoomItemBox box = child.GetComponent<RoomItemBox>();
-                if (box != null)
-                {
-                    scores[i] += box.boxCount.Value;
-                }
-            }
-        }
-
-        Room01_Score = scores[0];
-        Room02_Score = scores[1];
-        Room03_Score = scores[2];
-        Room04_Score = scores[3];
-
-        countingEnd = true;
-
-        if (countingEnd == true)
-        {
-            Debug.LogFormat($"{Room01_Score}, {Room02_Score}, {Room03_Score}, {Room04_Score}");
-        }
-    }
-
-    /// <summary>
     /// 게임 시작시 세팅
     /// </summary>
     private void GameStart()
     {
-        Room01_Score = 0;
-        Room02_Score = 0;
-        Room03_Score = 0;
-        Room04_Score = 0;
-
         itemSpawner.SpawnerOn();
 
         // 모든 플레이어 골드 초기화
@@ -148,20 +101,19 @@ public class GameManger : NetworkBehaviour
     }
 
     #region[캐릭터 텔레포트]
-    /// <summary>
-    /// 서버 이동 명령 RPC
-    /// </summary>
+
     [ServerRpc(RequireOwnership = false)]
     public void TeleportPlayersServerRpc()
     {
         ChangePositions();
     }
 
-    /// <summary>
-    /// 실질적 이동 코드, 컨트롤러 비활성화
-    /// </summary>
+    // GameManger.cs (수정된 ChangePositions 메서드)
+
     private void ChangePositions()
     {
+        DebugPrintAllPlayers();
+
         foreach (NetworkPlayer player in NetworkPlayer.AllPlayers)
         {
             PlayerMove playerCon = player.GetComponent<PlayerMove>();
@@ -172,42 +124,54 @@ public class GameManger : NetworkBehaviour
                 Vector3 targetPos = RoomsSPos[(int)targetClientId].position;
                 Quaternion targetRot = RoomsSPos[(int)targetClientId].rotation;
 
-                // 이동 로직 잠시 끄기
-                playerCon.enabled = false;
+                ClientRpcSendParams rpcSendParams = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { targetClientId }
+                };
 
-                // CharacterController도 같이 끄기
-                var controller = playerCon.GetComponent<CharacterController>();
-                if (controller != null) controller.enabled = false;
-
-                // 좌표 강제 세팅
-                playerCon.transform.SetPositionAndRotation(targetPos, targetRot);
-
-                // 코루틴으로 한 프레임 뒤에 다시 켜기
-                StartCoroutine(ReenableNextFrame(playerCon, controller, targetClientId, targetPos));
+                playerCon.TeleportTargetClientRpc(targetPos, targetRot);
             }
         }
     }
-
-    // 컨트롤러 재 화성화 코루틴
-    private IEnumerator ReenableNextFrame(PlayerMove playerCon, CharacterController controller, ulong clientId, Vector3 targetPos)
-    {
-        yield return null; // 한 프레임 대기
-
-        if (controller != null) controller.enabled = true;
-        playerCon.enabled = true;
-    }
     #endregion
 
-    void OnGUI()
-    {
-        if (GUI.Button(new Rect(10, 10, 120, 40), "Click Me"))
-        {
-            ScoreCounting();
-        }
-    }
 
     public void GameStateChange(GameState curState)
     {
         NowGameState.Value = curState;
+    }
+
+    public static void DebugPrintAllPlayers()
+    {
+        // 리스트가 비어있는지 확인
+        if (NetworkPlayer.AllPlayers.Count == 0)
+        {
+            Debug.Log("DEBUG: AllPlayers 리스트가 비어 있습니다.");
+            return;
+        }
+
+        // 리스트의 총 개수를 먼저 출력
+        Debug.Log($"DEBUG: === AllPlayers 리스트 ({NetworkPlayer.AllPlayers.Count}명) 출력 시작 ===");
+
+        // 리스트의 각 항목을 순회하며 정보 출력
+        for (int i = 0; i < NetworkPlayer.AllPlayers.Count; i++)
+        {
+            NetworkPlayer player = NetworkPlayer.AllPlayers[i];
+
+            // 플레이어 객체가 null이 아닌지 확인
+            if (player != null)
+            {
+                // 각 플레이어의 중요한 정보를 출력
+                Debug.Log($"[{i}] Player Name: {player.gameObject.name} | " +
+                          $"Client ID: {player.OwnerClientId} | " +
+                          $"Network ID: {player.NetworkObjectId}");
+            }
+            else
+            {
+                Debug.Log($"[{i}] Player: NULL (리스트에서 객체를 찾을 수 없음)");
+            }
+        }
+
+        Debug.Log("DEBUG: === AllPlayers 리스트 출력 종료 ===");
     }
 }
