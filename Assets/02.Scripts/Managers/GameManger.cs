@@ -108,12 +108,9 @@ public class GameManger : NetworkBehaviour
         ChangePositions();
     }
 
-    // GameManger.cs (수정된 ChangePositions 메서드)
 
     private void ChangePositions()
     {
-        DebugPrintAllPlayers();
-
         foreach (NetworkPlayer player in NetworkPlayer.AllPlayers)
         {
             PlayerMove playerCon = player.GetComponent<PlayerMove>();
@@ -139,39 +136,5 @@ public class GameManger : NetworkBehaviour
     public void GameStateChange(GameState curState)
     {
         NowGameState.Value = curState;
-    }
-
-    public static void DebugPrintAllPlayers()
-    {
-        // 리스트가 비어있는지 확인
-        if (NetworkPlayer.AllPlayers.Count == 0)
-        {
-            Debug.Log("DEBUG: AllPlayers 리스트가 비어 있습니다.");
-            return;
-        }
-
-        // 리스트의 총 개수를 먼저 출력
-        Debug.Log($"DEBUG: === AllPlayers 리스트 ({NetworkPlayer.AllPlayers.Count}명) 출력 시작 ===");
-
-        // 리스트의 각 항목을 순회하며 정보 출력
-        for (int i = 0; i < NetworkPlayer.AllPlayers.Count; i++)
-        {
-            NetworkPlayer player = NetworkPlayer.AllPlayers[i];
-
-            // 플레이어 객체가 null이 아닌지 확인
-            if (player != null)
-            {
-                // 각 플레이어의 중요한 정보를 출력
-                Debug.Log($"[{i}] Player Name: {player.gameObject.name} | " +
-                          $"Client ID: {player.OwnerClientId} | " +
-                          $"Network ID: {player.NetworkObjectId}");
-            }
-            else
-            {
-                Debug.Log($"[{i}] Player: NULL (리스트에서 객체를 찾을 수 없음)");
-            }
-        }
-
-        Debug.Log("DEBUG: === AllPlayers 리스트 출력 종료 ===");
     }
 }

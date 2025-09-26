@@ -7,7 +7,7 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/01.Scenes/00_Login.unity
-    guid: 748565bbae224a0428a81d0b521d820c
+    guid: 1621d463bf99f9940860fc9f0e597895
   - enabled: 1
     path: Assets/01.Scenes/01_Lobby.unity
     guid: 22bae988ba2b43b4990f529cb46eada7
@@ -23,7 +23,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/02.Scripts/NetCode/Test/01_Lobby_Test.unity
     guid: f9965b1bec8149046984f639a69d001d
-  - enabled: 1
+  - enabled: 0
     path: Assets/01.Scenes/02_InGame_Test.unity
     guid: 45de7474d9dbb814fa73c2868fdd98d4
   m_configObjects:

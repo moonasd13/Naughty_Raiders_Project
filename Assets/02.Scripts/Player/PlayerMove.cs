@@ -109,9 +109,16 @@ public class PlayerMove : NetworkBehaviour
 
     void Update()
     {
+        var controller = GetComponent<CharacterController>();
+        if (controller != null && !controller.enabled)
+        {
+            return;
+        }
+
         if (!IsOwner) return;
 
-        if (!_isStun.Value)
+
+        if (!_isStun.Value || !in_action.Value)
         {
             // 입력 수집
             float horizontal = 0f;
@@ -458,7 +465,6 @@ public class PlayerMove : NetworkBehaviour
         StartCoroutine(ReenableControllerNextFrame(controller));
     }
 
-    // PlayerMove.cs 내부에 정의
     private IEnumerator ReenableControllerNextFrame(CharacterController controller)
     {
         yield return null; // 한 프레임 대기
