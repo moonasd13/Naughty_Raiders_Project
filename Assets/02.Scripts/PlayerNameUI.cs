@@ -13,16 +13,17 @@ public class PlayerNameUI : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        // 닉네임 동기화 이벤트 연결
-        playerName.OnValueChanged += OnNameChanged;
-        nameText.text = playerName.Value.ToString();
+        //// 닉네임 동기화 이벤트 연결
+        //playerName.OnValueChanged += OnNameChanged;
+        //nameText.text = playerName.Value.ToString();
 
-        // 오너 플레이어라면 서버에 닉네임 등록
-        if (IsOwner)
-        {
-            StartCoroutine(SetNameNextFrame());
+        //// 오너 플레이어라면 서버에 닉네임 등록
+        //if (IsOwner)
+        //{
+        //    StartCoroutine(SetNameNextFrame());
 
-        }
+        //}
+        SetNickName();
     }
 
     private IEnumerator SetNameNextFrame()
@@ -63,4 +64,17 @@ public class PlayerNameUI : NetworkBehaviour
         return playerName.Value.ToString();
     }
 
+    public void SetNickName()
+    {
+        // 닉네임 동기화 이벤트 연결
+        playerName.OnValueChanged += OnNameChanged;
+        nameText.text = playerName.Value.ToString();
+
+        // 오너 플레이어라면 서버에 닉네임 등록
+        if (IsOwner)
+        {
+            StartCoroutine(SetNameNextFrame());
+
+        }
+    }
 }
