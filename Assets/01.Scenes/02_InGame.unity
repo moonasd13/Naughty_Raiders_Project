@@ -36294,7 +36294,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: e9ed0588d6d47c94fa16ed7c3adeb47b, type: 3}
     m_FontSize: 40
     m_FontStyle: 1
     m_BestFit: 0
@@ -46561,7 +46561,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: e9ed0588d6d47c94fa16ed7c3adeb47b, type: 3}
     m_FontSize: 40
     m_FontStyle: 1
     m_BestFit: 0
@@ -49560,8 +49560,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Player List
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e8fc13076fe51074397db1b0bd2b5bdc, type: 2}
+  m_sharedMaterial: {fileID: -2085116956893000173, guid: e8fc13076fe51074397db1b0bd2b5bdc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -55863,7 +55863,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1719908789}
   - component: {fileID: 1719908790}
-  - component: {fileID: 1719908791}
   m_Layer: 5
   m_Name: Session Player List Item
   m_TagString: Untagged
@@ -55913,19 +55912,6 @@ MonoBehaviour:
   VoiceIndicatorHighSound: {fileID: 21300000, guid: 2578c8d3ee95138459931eddb18a23a4, type: 3}
   VoiceIndicatorNoAudio: {fileID: 21300000, guid: b9f7fa8447428af4b902ff5b6fb03cf0, type: 3}
   VoiceIndicatorMuted: {fileID: 21300000, guid: 7d187623f2f775e4987acb5462c7ff8d, type: 3}
---- !u!114 &1719908791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1719908788}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 241336ac654b46a4c82835ae3389e8fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerNickName: {fileID: 1283560422}
 --- !u!1 &1725513354
 GameObject:
   m_ObjectHideFlags: 0
@@ -59988,7 +59974,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1844089919}
   - component: {fileID: 1844089918}
-  - component: {fileID: 1844089920}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -60036,20 +60021,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1844089920
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1844089917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ca81de5fb54b6d488e6781be0cef0c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerListParent: {fileID: 0}
-  playerInfoPrefab: {fileID: 1719908791}
 --- !u!1 &1851875189
 GameObject:
   m_ObjectHideFlags: 0
@@ -62828,8 +62799,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e8fc13076fe51074397db1b0bd2b5bdc, type: 2}
+  m_sharedMaterial: {fileID: -2085116956893000173, guid: e8fc13076fe51074397db1b0bd2b5bdc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
