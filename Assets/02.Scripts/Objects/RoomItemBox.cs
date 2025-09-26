@@ -13,43 +13,12 @@ public class RoomItemBox : NetworkBehaviour
     public NetworkVariable<int> boxCount = new NetworkVariable<int>(0);
     [SerializeField] private int rewardPerBox = 10;
 
-    // 현재 범위 안에 있는 플레이어 목록
-    private readonly Dictionary<ulong, PlayerController> playersInZone = new();
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!IsServer) return;
-
-        if (other.CompareTag("Player"))
-        {
-            PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller != null && !playersInZone.ContainsKey(controller.OwnerClientId))
-            {
-                playersInZone.Add(controller.OwnerClientId, controller);
-            }
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (!IsServer) return;
-
-        if (other.CompareTag("Player"))
-        {
-            PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller != null && playersInZone.ContainsKey(controller.OwnerClientId))
-            {
-                playersInZone.Remove(controller.OwnerClientId);
-            }
-        }
-    }
-
     [ServerRpc(RequireOwnership = false)]
-    public void SubmitInteractServerRpc(ulong clientId)
+    public void SubmitInteractServerRpc(ServerRpcParams rpcParams = default)
     {
-        if (!playersInZone.ContainsKey(clientId)) return;
-
-        PlayerController controller = playersInZone[clientId];
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out NetworkClient client);
+        PlayerMove controller = client.PlayerObject.GetComponent<PlayerMove>();
 
         if (controller == null) return;
 

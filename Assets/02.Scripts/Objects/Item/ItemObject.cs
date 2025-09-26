@@ -90,7 +90,7 @@ public class ItemObject : NetworkBehaviour
 
         ShowItemClientRpc(item_kind);
 
-        GetComponent<NetworkObject>().Despawn(true);
+        Destroy(this.gameObject);
     }
 
     [ClientRpc]

@@ -6,7 +6,7 @@ public class Bullet : NetworkBehaviour
 {
     [SerializeField]
     public Collider _senseZone;
-    private PlayerController _firstPlayerController;
+    //private PlayerController _firstPlayerController;
 
     private Vector3 moveDirection;
     public float rayDistance = 0.5f;
@@ -45,15 +45,15 @@ public class Bullet : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        if (other.CompareTag("Player") && _firstPlayerController == null)
-        {
-            PlayerController controller = other.GetComponent<PlayerController>();
-            if (controller != null)
-            {
-                _firstPlayerController = controller;
-                //_firstPlayerController.stunON();
-            }
-        }
+        //if (other.CompareTag("Player") && _firstPlayerController == null)
+        //{
+        //    PlayerController controller = other.GetComponent<PlayerController>();
+        //    if (controller != null)
+        //    {
+        //        _firstPlayerController = controller;
+        //        //_firstPlayerController.stunON();
+        //    }
+        //}
 
         DespawnBullet();
     }
