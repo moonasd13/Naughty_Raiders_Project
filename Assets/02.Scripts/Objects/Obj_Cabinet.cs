@@ -8,7 +8,7 @@ public class Obj_Cabinet : NetworkBehaviour
     [SerializeField] private Transform showPosition;
     [SerializeField] private Collider _senseZone;
 
-    public void Interact(PlayerController player)
+    public void Interact(PlayerMove player)
     {
         if (!IsServer)
         {
@@ -16,48 +16,49 @@ public class Obj_Cabinet : NetworkBehaviour
             return;
         }
 
-        //if (player.hide.Value == false)
-        //{
-        //    HidePlayer(player);
-        //}
-        //else
-        //{
-        //    ShowPlayer(player);
-        //}
+        if (player.hide.Value == false)
+        {
+            HidePlayer(player);
+        }
+        else
+        {
+            ShowPlayer(player);
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void RequestInteractServerRpc(ulong clientId)
     {
-        PlayerController player = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>();
+        PlayerMove player = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerMove>();
         if (player != null)
         {
-            //if (player.hide.Value == false)
-            //{
-            //    HidePlayer(player);
-            //}
-            //else
-            //{
-            //    ShowPlayer(player);
-            //}
+            if (player.hide.Value == false)
+            {
+                HidePlayer(player);
+            }
+            else
+            {
+                ShowPlayer(player);
+            }
         }
     }
 
-    private void HidePlayer(PlayerController player)
+    private void HidePlayer(PlayerMove player)
     {
 
-        // 상태값 동기화용 NetworkVariable 사용 가능
-        //player.hide.Value = true;
-        // 플레이어 위치 이동
+        //상태값 동기화용 NetworkVariable 사용 가능
+        player.hide.Value = true;
+
+        //플레이어 위치 이동
         HidePlayerClientRpc(player.OwnerClientId, hidePosition.position, hidePosition.rotation);
 
         Debug.Log($"Player {player.OwnerClientId} 숨김 처리 완료");
     }
 
-    private void ShowPlayer(PlayerController player)
+    private void ShowPlayer(PlayerMove player)
     {
 
-        //player.hide.Value = false;
+        player.hide.Value = false;
         HidePlayerClientRpc(player.OwnerClientId, showPosition.position, showPosition.rotation);
 
         Debug.Log($"Player {player.OwnerClientId} 숨김 처리 해제 완료");
@@ -70,7 +71,7 @@ public class Obj_Cabinet : NetworkBehaviour
         if (NetworkManager.Singleton.LocalClientId != clientId) return;
 
         // 플레이어 오브젝트 가져오기
-        PlayerController player = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerController>();
+        PlayerMove player = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerMove>();
         if (player == null) return;
 
         var cc = player.GetComponent<CharacterController>();

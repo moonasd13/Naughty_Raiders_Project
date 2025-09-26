@@ -1,12 +1,18 @@
-using Unity.Netcode;
 using Define_Enums;
+using StarterAssets;
+using System.Collections;
+using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
+
 
 public class PlayerMove : NetworkBehaviour
 {
     [SerializeField] public CharacterController _controller;
     [SerializeField] public Animator _animator;
     [SerializeField] public PlayerItem PlayerItem;
+    [SerializeField] GameObject _gun;
+    [SerializeField] Transform _rHPos;
     private GameObject _mainCamera;
 
     [Header("Player")]
@@ -58,9 +64,17 @@ public class PlayerMove : NetworkBehaviour
 
     private bool _hasAnimator;
 
+    private float _defaultMoveSpeed;
+    private float _defaultSprintSpeed;
+    private float _speedIncrease = 1.3f;
+
+    Item_Gun _item;
+
 
     [Header("NetworkVariable")]
-    //public NetworkVariable<float> AnimationBlend = new NetworkVariable<float>( 0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<float> AnimationBlend = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    public NetworkVariable<float> NetworkMotionSpeed = new NetworkVariable<float>(1f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     public NetworkVariable<ItemKind> my_ItemKind = new NetworkVariable<ItemKind>(ItemKind.None, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -132,18 +146,17 @@ public class PlayerMove : NetworkBehaviour
     {
         if (_hasAnimator)
         {
-            //_animator.SetFloat(_animIDSpeed, AnimationBlend.Value);
+            _animator.SetFloat(_animIDSpeed, AnimationBlend.Value);
+            _animator.SetFloat(_animIDMotionSpeed, NetworkMotionSpeed.Value);
         }
-        // 서버 RPO를 이용한 동기화 호스트일때 오너와 클라이언트일경우에 오너가 다르게 한다. 서버가 모든것을 하게하고 클라이언트는 자신의 것만 동기화하게한다.
 
         if (!IsOwner)
         {
-     
+            return;
         }
-        else
-        {
-            CameraRotation();
-        }
+
+        // Owner만 자신의 카메라를 회전시킵니다.
+        CameraRotation();
     }
 
     private void AssignAnimationIDs()
@@ -214,7 +227,10 @@ public class PlayerMove : NetworkBehaviour
         _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
         if (_animationBlend < 0.01f) _animationBlend = 0f;
 
-        //AnimationBlend.Value = _animationBlend; // 여기서 네트워크로 자동 동기화됨
+        if (IsOwner)
+        {
+            UpdateAnimationBlendServerRpc(_animationBlend);
+        }
 
 
         Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
@@ -229,9 +245,24 @@ public class PlayerMove : NetworkBehaviour
         Vector3 targetDirection = Quaternion.Euler(0f, _targetRotation, 0f) * Vector3.forward;
         _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0f, _verticalVelocity, 0f) * Time.deltaTime);
 
-        if (_hasAnimator)
-            _animator.SetFloat(_animIDMotionSpeed, moveInput.magnitude);
+        if (IsOwner)
+        {
+            UpdateMotionSpeedServerRpc(moveInput.magnitude);
+        }
     }
+
+    #region[애니메이션 블렌드 + 모션스피드 동기화]
+    [ServerRpc]
+    private void UpdateAnimationBlendServerRpc(float blendValue)
+    {
+        AnimationBlend.Value = blendValue;
+    }
+    [ServerRpc]
+    private void UpdateMotionSpeedServerRpc(float motionSpeed)
+    {
+        NetworkMotionSpeed.Value = motionSpeed;
+    }
+    #endregion
 
     private void JumpAndGravity()
     {
@@ -292,13 +323,13 @@ public class PlayerMove : NetworkBehaviour
 
             if (box != null)
             {
-                box.SubmitInteractServerRpc(OwnerClientId);
+                box.SubmitInteractServerRpc();
                 break;
             }
 
             if (cabinet != null)
             {
-                //cabinet.Interact();
+                cabinet.Interact(this);
                 break;
             }
             
@@ -350,11 +381,70 @@ public class PlayerMove : NetworkBehaviour
         _animator.SetBool("Shooting", false);
     }
 
-    #endregion
 
+    /// 스피드 값 수정
+    public void CjangeSpeed()
+    {
+        _defaultMoveSpeed = MoveSpeed.Value;
+        _defaultSprintSpeed = SprintSpeed.Value;
+        equip.Value = false;
+        my_ItemKind.Value = ItemKind.None;
 
-    #region[발소리]
-    private void OnFootstep(AnimationEvent animationEvent)
+        MoveSpeed.Value *= _speedIncrease;
+        SprintSpeed.Value *= _speedIncrease;
+
+        StartCoroutine(RevertSpeedAfterDelay(10f));
+    }
+    private IEnumerator RevertSpeedAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        MoveSpeed.Value = _defaultMoveSpeed;
+        SprintSpeed.Value = _defaultSprintSpeed;
+    }
+
+    public void UseGun()
+    {
+        in_action.Value = true;
+        ShootServerRpc();
+    }
+
+    /// 총 생성 RPC
+    /// </summary>
+    [ServerRpc(RequireOwnership = false)]
+    void ShootServerRpc()
+    {
+        //Quaternion fireRotation = Quaternion.LookRotation(shootDir);
+
+        GameObject itemObj = Instantiate(_gun, _rHPos.position, _rHPos.rotation);
+        var netObj = itemObj.GetComponent<NetworkObject>();
+        netObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        netObj.Spawn(true);
+
+        _item = netObj.GetComponent<Item_Gun>();
+        _item.equip = true;
+    }
+
+    // 슈팅 에니메이션 종료
+    private void ShootingOff()
+    {
+        if (!IsOwner) return;
+        ShootoffServerRpc();
+    }
+
+    [ServerRpc]
+    public void ShootoffServerRpc()
+    {
+        in_action.Value = false;
+        equip.Value = false;
+        my_ItemKind.Value = ItemKind.None;
+
+        Destroy(_item.gameObject);
+    }
+#endregion
+
+#region[발소리]
+private void OnFootstep(AnimationEvent animationEvent)
     {
         if (animationEvent.animatorClipInfo.weight > 0.5f)
         {
