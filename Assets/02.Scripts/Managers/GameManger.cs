@@ -18,7 +18,6 @@ public class GameManger : NetworkBehaviour
     public GameObject[] Room_Chests;
     public Transform[] RoomsSPos;
 
-<<<<<<< Updated upstream
 
     private bool is_GameStarted = false;
     private bool is_playersPosChanged = false;
@@ -40,27 +39,9 @@ public class GameManger : NetworkBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-=======
-    private DatabaseManager m_databaseManager;
-    private int Room01_Score = 0;
-    private int Room02_Score = 0;
-    private int Room03_Score = 0;
-    private int Room04_Score = 0;
-    private bool countingEnd = false;
-    private bool is_GameStart = false;
->>>>>>> Stashed changes
-
-    private void Awake()
-    {
-        m_databaseManager = DatabaseManager.Instance;        
-    }
 
     void Start()
     {
-<<<<<<< Updated upstream
-=======
-       StartGame();
->>>>>>> Stashed changes
     }
 
     void Update()
@@ -122,22 +103,6 @@ public class GameManger : NetworkBehaviour
     public void TeleportPlayersServerRpc()
     {
         ChangePositions();
-    }
-
-    public void StartGame()
-    {
-        //DatabaseManager에서 RoomId를 가져옴
-        if (string.IsNullOrEmpty(m_databaseManager.CurrentRoomId))
-        {
-            Debug.LogWarning("RoomId가 설정되지 않았습니다!");
-            return;
-        }
-
-        //모든 플레이어의 골드 초기화
-        m_databaseManager.ResetAllPlayersGold();
-
-        //플레이어 데이터 UI 갱신
-        m_databaseManager.LoadAllPlayersData();
     }
 
 
