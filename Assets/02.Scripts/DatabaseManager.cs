@@ -99,8 +99,7 @@ public class DatabaseManager : MonoBehaviour
 
                 foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
                 {
-                    if (player.IsServer)
-                        player.Gold.Value = 0;
+                    player.Gold.Value = 0;
                 }
             }
         });

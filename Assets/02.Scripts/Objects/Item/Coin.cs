@@ -33,8 +33,21 @@ public class Coin : NetworkBehaviour
 
 
     [ServerRpc(RequireOwnership = false)]
-    private void RequestPickupServerRpc(/*ServerRpcParams rpcParams = default*/)
+    private void RequestPickupServerRpc(ServerRpcParams rpcParams = default)
     {
+        ulong requestingClientId = rpcParams.Receive.SenderClientId;
+
+        NetworkObject playerObject = NetworkManager.Singleton.ConnectedClients[requestingClientId].PlayerObject;
+        PlayerMove playerController = playerObject.GetComponent<PlayerMove>();
+
+        if (playerController == null)
+        {
+            Debug.LogError("PlayerController 못 찾음!");
+            return;
+        }
+
+        _playerController = playerController; // 안전하게 저장
+
         _playerController.inHand.Value = true;
 
         Destroy(this.gameObject);

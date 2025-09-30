@@ -12,7 +12,7 @@ public class PlayerMove : NetworkBehaviour
     [SerializeField] public Animator _animator;
     [SerializeField] public PlayerItem PlayerItem;
     [SerializeField] GameObject _gun;
-    [SerializeField] Transform _rHPos;
+    [SerializeField] public Transform _rHPos;
     private GameObject _mainCamera;
 
     [Header("Player")]
@@ -416,20 +416,27 @@ public class PlayerMove : NetworkBehaviour
         ShootServerRpc();
     }
 
-    /// 총 생성 RPC
-    /// </summary>
+    // 총 생성 및 부모 NetworkVariable 설정 (Server-side)
     [ServerRpc(RequireOwnership = false)]
     void ShootServerRpc()
     {
-        //Quaternion fireRotation = Quaternion.LookRotation(shootDir);
+        if (_item != null) return;
 
-        GameObject itemObj = Instantiate(_gun, _rHPos.position, _rHPos.rotation);
+        GameObject itemObj = Instantiate(_gun);
         var netObj = itemObj.GetComponent<NetworkObject>();
-        netObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+
+        // 1. 서버에서 총 스폰
         netObj.Spawn(true);
 
         _item = netObj.GetComponent<Item_Gun>();
-        _item.equip = true;
+        _item.equip.Value = true;
+
+        // 2. 서버에서 총의 NetworkVariable에 부모 설정
+        NetworkObject parentNetObj = GetComponent<NetworkObject>(); // 총을 쏘는 캐릭터의 NetworkObject
+        if (parentNetObj != null)
+        {
+            _item.ParentNetObjectRef.Value = new NetworkObjectReference(parentNetObj);
+        }
     }
 
     // 슈팅 에니메이션 종료
@@ -446,7 +453,12 @@ public class PlayerMove : NetworkBehaviour
         equip.Value = false;
         my_ItemKind.Value = ItemKind.None;
 
-        Destroy(_item.gameObject);
+        if (_item != null)
+        {
+            var netObj = _item.GetComponent<NetworkObject>();
+            if (netObj != null && netObj.IsSpawned)
+                netObj.Despawn(true);
+        }
     }
 
     /// <summary>

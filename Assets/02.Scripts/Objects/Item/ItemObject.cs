@@ -16,7 +16,8 @@ public class ItemObject : NetworkBehaviour
     private Vector3 _startPosition;
 
     ItemKind item_kind;
-    public bool equip = false;
+    public NetworkVariable<bool> equip =
+        new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     Bullet codebullet;
 
     private PlayerMove _playerController;
@@ -40,7 +41,7 @@ public class ItemObject : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        if(!equip)
+        if(!equip.Value)
         {
             Rotate();
             FloatUpAndDown();
