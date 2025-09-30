@@ -60932,7 +60932,6 @@ MonoBehaviour:
   gameOverPanel: {fileID: 146987854}
   quitButton: {fileID: 922487784}
   goToSceneButton: {fileID: 1856378993}
-  targetSceneName: 01_Lobby
 --- !u!1 &1851875189
 GameObject:
   m_ObjectHideFlags: 0
@@ -61336,7 +61335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  matchDurationSeconds: 10
+  matchDurationSeconds: 600
   TimeLeft:
     m_InternalValue: 0
   IsRunning:

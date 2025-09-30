@@ -90,7 +90,14 @@ public class ItemObject : NetworkBehaviour
 
         ShowItemClientRpc(item_kind);
 
-        Destroy(this.gameObject);
+        if (NetworkObject != null && NetworkObject.IsSpawned)
+        {
+            NetworkObject.Despawn(); // 네트워크 오브젝트 동기화 삭제
+        }
+        else
+        {
+            Destroy(gameObject); // 안전망
+        }
     }
 
     [ClientRpc]

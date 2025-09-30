@@ -78,7 +78,10 @@ public class GameManger : NetworkBehaviour
 
                 if (currentTime <= 0)
                 {
-                    GameOverUI.Instance.ShowGameOver();
+                    if (GameOverUI.Instance != null)   // ½Ì±ÛÅæÀ¸·Î ¸¸µé¾ú´Ù¸é
+                    {
+                        GameOverUI.Instance.ShowGameOver();
+                    }
                 }
                 
                 break;

@@ -34,13 +34,21 @@ public class PlayerUI2 : MonoBehaviour
     {
         gunImage.SetActive(false);
         speedImage.SetActive(false);
-        coinImage.SetActive(false);
     }
 
     public void UpdateItemUI(int itemType)
     {
         gunImage.gameObject.SetActive(itemType == 1);
         speedImage.gameObject.SetActive(itemType == 2);
-        coinImage.gameObject.SetActive(itemType == 3);
+    }
+
+    public void ShowCoin()
+    {
+        coinImage.SetActive(true);
+    }
+
+    public void HideCoin()
+    {
+        coinImage.SetActive(false);
     }
 }

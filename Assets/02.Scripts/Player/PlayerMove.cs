@@ -315,6 +315,7 @@ public class PlayerMove : NetworkBehaviour
             Cursor.visible = false;
 
             my_ItemKind.OnValueChanged += OnItemKindChanged;
+            inHand.OnValueChanged += OnInHandChanged;
         }
     }
 
@@ -333,6 +334,17 @@ public class PlayerMove : NetworkBehaviour
         {
             myUI.UpdateItem(current);
         }
+    }
+
+    private void OnInHandChanged(bool previous, bool current)
+    {
+        if (!IsOwner) return;
+        if (myUI == null) return;
+
+        if (current)
+            myUI.ShowCoin();
+        else
+            myUI.HideCoin();
     }
 
     public void SetUI(PlayerUI2 ui)
