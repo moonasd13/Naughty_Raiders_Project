@@ -76,13 +76,18 @@ public class GameManger : NetworkBehaviour
                     }
                 }
 
+                if (currentTime <= 0)
+                {
+                    GameOverUI.Instance.ShowGameOver();
+                }
+                
                 break;
             case GameState.secondTime:
                 if (currentTime <= 0)
                 {
                     GameOverUI.Instance.ShowGameOver();
                 }
-                    break;
+            break;
         }
     }
 

@@ -37,10 +37,9 @@ public class DatabaseManager : MonoBehaviour
         //LoadNickFromDatabase();
     }
 
-    public void LoadGoldFromDatabase(PlayerData player, string firebaseUid)     //골드 불러오기
+    public void LoadGoldFromDatabase(PlayerData player, string firebaseUid)
     {
-        m_databaseRef.Child("users").Child(firebaseUid).Child("Gold").GetValueAsync()
-        .ContinueWithOnMainThread(task =>
+        m_databaseRef.Child("users").Child(firebaseUid).Child("Gold").GetValueAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
             {
@@ -48,17 +47,17 @@ public class DatabaseManager : MonoBehaviour
                 var snapshot = task.Result;
                 if (snapshot.Exists && int.TryParse(snapshot.Value.ToString(), out gold))
                 {
-                    player.Gold.Value = gold;  //UI 말고 PlayerData에 반영
+                    player.SetGoldFromDatabaseServerRpc(gold);
                 }
                 else
                 {
-                    player.Gold.Value = 0;
+                    player.SetGoldFromDatabaseServerRpc(0);
                 }
             }
         });
     }
 
-    public void LoadNickFromDatabase(PlayerData player, string firebaseUid)     //닉네임 불러오기
+    public void LoadNickFromDatabase(PlayerData player, string firebaseUid)
     {
         m_databaseRef.Child("users").Child(firebaseUid).Child("Nickname").GetValueAsync()
         .ContinueWithOnMainThread(task =>
@@ -66,7 +65,8 @@ public class DatabaseManager : MonoBehaviour
             if (task.IsCompletedSuccessfully)
             {
                 var snapshot = task.Result;
-                player.Nickname.Value = snapshot.Exists ? snapshot.Value.ToString() : "NoName";
+                string nick = snapshot.Exists ? snapshot.Value.ToString() : "NoName";
+                player.SetNicknameFromDatabaseServerRpc(nick);
             }
         });
     }
@@ -80,12 +80,12 @@ public class DatabaseManager : MonoBehaviour
         {
             if (task.IsCompletedSuccessfully)
             {
-                player.Gold.Value = newGoldCount; // 네트워크 변수 갱신
+                player.SetGoldFromDatabaseServerRpc(newGoldCount); // 서버에서 갱신
             }
         });
     }
 
-    public void ResetAllPlayersGold()     //플레이어 골드 데이터 초기화
+    public void ResetAllPlayersGold()
     {
         m_databaseRef.Child("users").GetValueAsync().ContinueWithOnMainThread(task =>
         {
@@ -99,8 +99,7 @@ public class DatabaseManager : MonoBehaviour
 
                 foreach (var player in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
                 {
-                    if (player.IsServer)
-                        player.Gold.Value = 0;
+                    player.ResetGoldServerRpc();
                 }
             }
         });

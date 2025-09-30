@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Coin : NetworkBehaviour
 {
-    private PlayerMove _playerController;
-
     [Header("Rotation Settings")]
     public float rotationSpeed = 45f;
 
@@ -23,21 +21,28 @@ public class Coin : NetworkBehaviour
 
     public void GetCoin(PlayerMove player)
     {
-        _playerController = player;
-
-        if (_playerController.inHand.Value == false)
+        if (player.inHand.Value == false)
         {
-            RequestPickupServerRpc();
+            RequestPickupServerRpc(player.NetworkObjectId);
         }
     }
 
-
     [ServerRpc(RequireOwnership = false)]
-    private void RequestPickupServerRpc(/*ServerRpcParams rpcParams = default*/)
+    private void RequestPickupServerRpc(ulong playerNetworkId)
     {
-        _playerController.inHand.Value = true;
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerNetworkId, out var playerObj))
+        {
+            var playerMove = playerObj.GetComponent<PlayerMove>();
+            if (playerMove != null && !playerMove.inHand.Value)
+            {
+                playerMove.inHand.Value = true;
+            }
+        }
 
-        Destroy(this.gameObject);
+        // 코인 삭제
+        var netObj = GetComponent<NetworkObject>();
+        if (netObj != null) netObj.Despawn();
+        else Destroy(gameObject);
     }
 
     /// <summary>

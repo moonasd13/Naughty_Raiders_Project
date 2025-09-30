@@ -104,4 +104,22 @@ public class PlayerData : NetworkBehaviour
             DatabaseManager.Instance.SaveGoldToDatabase(FirebaseUid, Gold.Value);
         }
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetGoldFromDatabaseServerRpc(int gold)
+    {
+        Gold.Value = gold;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetNicknameFromDatabaseServerRpc(string nickname)
+    {
+        Nickname.Value = nickname;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ResetGoldServerRpc()
+    {
+        Gold.Value = 0;
+    }
 }
