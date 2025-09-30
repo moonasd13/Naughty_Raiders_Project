@@ -12,7 +12,7 @@ public class PlayerMove : NetworkBehaviour
     [SerializeField] public Animator _animator;
     [SerializeField] public PlayerItem PlayerItem;
     [SerializeField] GameObject _gun;
-    [SerializeField] Transform _rHPos;
+    [SerializeField] public Transform _rHPos;
     private GameObject _mainCamera;
 
     [Header("Player")]
@@ -72,6 +72,15 @@ public class PlayerMove : NetworkBehaviour
 
     Item_Gun _item;
 
+    /// <summary>
+    /// 레이케스트용 변수
+    /// </summary>
+    public float rayHeightOffset = 0.5f;
+    [SerializeField]
+    private LayerMask hitLayerMask;
+
+
+
 
     [Header("NetworkVariable")]
     public NetworkVariable<float> AnimationBlend = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -118,9 +127,11 @@ public class PlayerMove : NetworkBehaviour
         }
 
         if (!IsOwner) return;
+        
 
+        Ray();
 
-        if (!_isStun.Value || !in_action.Value)
+        if (!_isStun.Value && !in_action.Value)
         {
             // 입력 수집
             float horizontal = 0f;
@@ -311,8 +322,8 @@ public class PlayerMove : NetworkBehaviour
     {
         if (IsOwner)
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            //Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.visible = false;
 
             my_ItemKind.OnValueChanged += OnItemKindChanged;
         }
@@ -447,15 +458,53 @@ public class PlayerMove : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     void ShootServerRpc()
     {
-        //Quaternion fireRotation = Quaternion.LookRotation(shootDir);
-
         GameObject itemObj = Instantiate(_gun, _rHPos.position, _rHPos.rotation);
         var netObj = itemObj.GetComponent<NetworkObject>();
         netObj.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         netObj.Spawn(true);
 
         _item = netObj.GetComponent<Item_Gun>();
-        _item.equip = true;
+        _item.equip.Value = true;
+
+     
+
+        // 2. 서버에서 총의 NetworkVariable에 부모 설정
+        NetworkObject parentNetObj = GetComponent<NetworkObject>(); // 총을 쏘는 캐릭터의 NetworkObject
+        if (parentNetObj != null)
+        {
+            _item.ParentNetObjectRef.Value = new NetworkObjectReference(parentNetObj);
+        }
+        _item.equip.Value = true;
+    }
+
+    private void Ray()
+    {
+        Vector3 startPoint = transform.position + Vector3.up * rayHeightOffset;
+        Vector3 direction = transform.forward;
+
+        float maxDistance = 10f;
+        RaycastHit hit;
+
+        // 1. Scene 뷰에 디버그용 선을 그립니다.
+        Debug.DrawRay(startPoint, direction * maxDistance, Color.red);
+
+        if (Physics.Raycast(startPoint, direction, out hit, maxDistance, hitLayerMask))
+        {
+            PlayerMove playerScript = hit.collider.GetComponent<PlayerMove>();
+
+            if (playerScript != null)
+            {
+                // 1. 타겟 오브젝트의 NetworkObject를 얻습니다.
+                NetworkObject targetNetObj = playerScript.gameObject. GetComponent<NetworkObject>();
+
+                if (targetNetObj != null)
+                {
+                    // 2. 서버에게 스턴 요청 RPC를 보냅니다.
+                    RequestStunServerRpc(new NetworkObjectReference(targetNetObj));
+                    Debug.Log("감지함");
+                }
+            }
+        }
     }
 
     // 슈팅 에니메이션 종료
@@ -496,6 +545,60 @@ public class PlayerMove : NetworkBehaviour
         yield return null; // 한 프레임 대기
         if (controller != null) controller.enabled = true;
     }
+
+    /// <summary>
+    /// 스턴 RPC
+    /// </summary>
+    /// <param name="targetPlayerNetObjRef"></param>
+    [ServerRpc(RequireOwnership = false)]
+    void RequestStunServerRpc(NetworkObjectReference targetPlayerNetObjRef)
+    {
+        // 서버에서 요청을 받아 대상 NetworkObject를 찾습니다.
+        if (targetPlayerNetObjRef.TryGet(out NetworkObject targetNetObj))
+        {
+            Debug.Log("RPC보냄");
+            PlayerMove playerScript = targetNetObj.GetComponent<PlayerMove>();
+            if (playerScript != null)
+            {
+                // 2. 서버가 안전하게 NetworkVariable 값을 변경하는 StunOn()을 호출합니다.
+                playerScript.StunOn();
+            }
+        }
+    }
+
+    /// <summary>
+    ///  스턴 코루틴
+    /// </summary>
+    /// <param name="animationEvent"></param>
+    public void StunOn(float duration = 5f)
+    {
+
+        if (!IsServer && !IsOwner)
+        {
+            Debug.LogError("StunOn()은 서버 또는 오너만 호출할 수 있습니다.");
+            return;
+        }
+
+        if (_isStun.Value)
+        {
+            return;
+        }
+
+        _isStun.Value = true;
+
+        StartCoroutine(StunDurationCoroutine(duration));
+    }
+
+    /// <summary>
+    /// 지정된 시간만큼 대기 후 스턴을 해제하는 코루틴
+    /// </summary>
+    private IEnumerator StunDurationCoroutine(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        _isStun.Value = false;
+    }
+
     #endregion
 
     #region[발소리]

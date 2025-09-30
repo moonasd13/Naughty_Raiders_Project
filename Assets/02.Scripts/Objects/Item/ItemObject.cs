@@ -16,10 +16,16 @@ public class ItemObject : NetworkBehaviour
     private Vector3 _startPosition;
 
     ItemKind item_kind;
-    public bool equip = false;
     Bullet codebullet;
 
     private PlayerMove _playerController;
+
+    public NetworkVariable<bool> equip =
+        new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    // 부모 NetworkObject 참조 (기존 코드)
+    public NetworkVariable<NetworkObjectReference> ParentNetObjectRef =
+        new NetworkVariable<NetworkObjectReference>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     private void Start()
     {
@@ -38,9 +44,7 @@ public class ItemObject : NetworkBehaviour
     }
     void Update()
     {
-        if (!IsServer) return;
-
-        if(!equip)
+        if(!equip.Value)
         {
             Rotate();
             FloatUpAndDown();
@@ -90,7 +94,10 @@ public class ItemObject : NetworkBehaviour
 
         ShowItemClientRpc(item_kind);
 
-        Destroy(this.gameObject);
+        var netObj = GetComponent<NetworkObject>();
+
+        if (netObj != null)
+            netObj.Despawn(true);
     }
 
     [ClientRpc]

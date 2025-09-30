@@ -1310,11 +1310,11 @@ Transform:
   m_GameObject: {fileID: 4708186117000464790}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 0.087, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3805595556765522082}
+  m_Father: {fileID: 2984970416062854485}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4712397596440761943
 GameObject:
@@ -1806,7 +1806,6 @@ Transform:
   - {fileID: 4745264884707001926}
   - {fileID: 1351472337810141986}
   - {fileID: 2984970416062854485}
-  - {fileID: 1719881424674557362}
   m_Father: {fileID: 6895065061748862246}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6279541067253002038
@@ -2033,7 +2032,8 @@ Transform:
   m_LocalPosition: {x: 0.082, y: 0.168, z: -0.001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1719881424674557362}
   m_Father: {fileID: 3805595556765522082}
   m_LocalEulerAnglesHint: {x: -76.538, y: 148.258, z: 98.04}
 --- !u!1 &7388234048288987957
@@ -2104,7 +2104,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1952444588025689979}
@@ -2383,6 +2383,10 @@ MonoBehaviour:
   BottomClamp: -30
   CameraAngleOverride: 0
   LockCameraPosition: 0
+  rayHeightOffset: 0.5
+  hitLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
   AnimationBlend:
     m_InternalValue: 0
   NetworkMotionSpeed:
