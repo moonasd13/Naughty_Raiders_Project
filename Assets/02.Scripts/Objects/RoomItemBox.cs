@@ -47,6 +47,7 @@ public class RoomItemBox : NetworkBehaviour
         var localPlayerObj = NetworkManager.Singleton.LocalClient.PlayerObject;
         if (localPlayerObj == null)
         {
+<<<<<<< Updated upstream
             Debug.LogWarning("SendGoldToClientRpc: Local PlayerObject가 null입니다.");
             return;
         }
@@ -74,6 +75,9 @@ public class RoomItemBox : NetworkBehaviour
         else
         {
             Debug.LogWarning("SendGoldToClientRpc: DatabaseManager.Instance가 null입니다.");
+=======
+            //DatabaseManager.Instance.ChangeGold(goldAmount);
+>>>>>>> Stashed changes
         }
     }
 
