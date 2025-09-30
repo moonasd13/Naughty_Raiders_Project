@@ -16,7 +16,15 @@ public class PlayerData : NetworkBehaviour
         NetworkVariableWritePermission.Server
     );
 
+    public NetworkVariable<int> CurrentItem = new NetworkVariable<int>(
+        0,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+
     public string FirebaseUid;
+
+    private PlayerUI2 myUI;
 
     public static PlayerData LocalPlayer {  get; private set; }
     
@@ -30,12 +38,27 @@ public class PlayerData : NetworkBehaviour
         GameUI.Instance.UpdatePlayer(this);
     }
 
+    private void OnItemChanged(int oldValue, int newValue)
+    {
+        if (IsOwner && myUI != null)
+        {
+            myUI.UpdateItemUI(newValue);
+        }
+    }
+
     public override void OnNetworkSpawn()
     {
         if (IsOwner)
         {
             LocalPlayer = this;
+
+            myUI = GameUI.Instance.CreatePlayerUI(this);
+
+            var playerMove = GetComponent<PlayerMove>();
+            playerMove.SetUI(myUI);
         }
+
+        CurrentItem.OnValueChanged += OnItemChanged;
 
         //스폰 직후 UI에 등록
         GameUI.Instance.RegisterPlayer(this);
@@ -51,6 +74,14 @@ public class PlayerData : NetworkBehaviour
             SubmitFirebaseUidServerRpc(myUid);
         }
     }
+    public override void OnNetworkDespawn()
+    {
+        Gold.OnValueChanged -= OnGoldChanged;
+        Nickname.OnValueChanged -= OnNickChanged;
+        //플레이어가 나가면 UI에서 제거
+        GameUI.Instance.UnregisterPlayer(this);
+        CurrentItem.OnValueChanged -= OnItemChanged;
+    }
 
     [ServerRpc]
     private void SubmitFirebaseUidServerRpc(string uid)
@@ -60,14 +91,6 @@ public class PlayerData : NetworkBehaviour
         // 서버에서 DB 데이터 불러오기
         DatabaseManager.Instance.LoadGoldFromDatabase(this, FirebaseUid);
         DatabaseManager.Instance.LoadNickFromDatabase(this, FirebaseUid);
-    }
-
-    public override void OnNetworkDespawn()
-    {
-        Gold.OnValueChanged -= OnGoldChanged;
-        Nickname.OnValueChanged -= OnNickChanged;
-        //플레이어가 나가면 UI에서 제거
-        GameUI.Instance.UnregisterPlayer(this);
     }
 
     [ServerRpc]

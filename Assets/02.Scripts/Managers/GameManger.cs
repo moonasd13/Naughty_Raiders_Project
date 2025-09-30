@@ -80,7 +80,7 @@ public class GameManger : NetworkBehaviour
             case GameState.secondTime:
                 if (currentTime <= 0)
                 {
-                    Debug.Log("game end"); 
+                    GameOverUI.Instance.ShowGameOver();
                 }
                     break;
         }
@@ -95,9 +95,6 @@ public class GameManger : NetworkBehaviour
 
         // 모든 플레이어 골드 초기화
         DatabaseManager.Instance.ResetAllPlayersGold();
-
-        //// 모든 플레이어 닉네임 + 골드 불러와서 UI 갱신
-        //DatabaseManager.Instance.LoadAllPlayersData();
     }
 
     #region[캐릭터 텔레포트]

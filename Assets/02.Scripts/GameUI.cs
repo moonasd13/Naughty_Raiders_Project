@@ -11,7 +11,6 @@ public class GameUI : MonoBehaviour
 
     [SerializeField] Text m_goldCountText;
     [SerializeField] Text m_nickNameText;
-    [SerializeField] Text m_timerText;
 
     [SerializeField] Button upButton;
     [SerializeField] Button downButton;
@@ -26,6 +25,9 @@ public class GameUI : MonoBehaviour
     [Header("플레이어 UI 리스트")]
     [SerializeField] Transform playerListParent;
     [SerializeField] PlayerUI playerUIPrefab;
+
+    [SerializeField] private Transform uiParent;
+    [SerializeField] private PlayerUI2 playerUIPrefab2;
 
     [Header("플레이어 패널 (Tab으로 토글)")]
     public GameObject playerUIPanel;
@@ -104,7 +106,7 @@ public class GameUI : MonoBehaviour
     public void SetGold(int gold)
     {
         m_curGold = gold;
-        if (m_goldCountText != null) m_goldCountText.text = m_curGold.ToString();
+        if (m_goldCountText != null) m_goldCountText.text = " - " + m_curGold.ToString();
     }
 
     public void SetNickName(string nickName)
@@ -131,7 +133,7 @@ public class GameUI : MonoBehaviour
         
         if (playerData.IsOwner)     //오너라면 내 UI도 업데이트
         {
-            m_goldCountText.text = playerData.Gold.Value.ToString();
+            m_goldCountText.text = " - " + playerData.Gold.Value.ToString();
             m_nickNameText.text = playerData.Nickname.Value.ToString();
         }
     }
@@ -143,15 +145,6 @@ public class GameUI : MonoBehaviour
             Destroy(ui.gameObject);
             playerUIMap.Remove(playerData.OwnerClientId);
         }
-    }
-
-    private PlayerData FindLocalPlayerData()    //본인 PlayerData 찾기
-    {
-        foreach (var pd in FindObjectsByType<PlayerData>(FindObjectsSortMode.None))
-        {
-            if (pd.IsOwner) return pd;
-        }
-        return null;
     }
 
     public void ShowItem(string itemType)
@@ -170,20 +163,11 @@ public class GameUI : MonoBehaviour
         }
     }
 
-    public void HideItem(string itemType)
+    public PlayerUI2 CreatePlayerUI(PlayerData player)
     {
-        switch (itemType)
-        {
-            case "Gun":
-                if (gunImage != null) gunImage.SetActive(false);
-                break;
-            case "Speed":
-                if (speedImage != null) speedImage.SetActive(false);
-                break;
-            case "Coin":
-                if (coinImage != null) coinImage.SetActive(false);
-                break;
-        }
+        PlayerUI2 ui = Instantiate(playerUIPrefab2, uiParent);
+        ui.SetOwner(player);
+        return ui;
     }
 
     void OnClickUp()

@@ -7,8 +7,6 @@ using UnityEngine;
 
 public class PlayerItem : NetworkBehaviour
 {
-    private PlayerMove _playerController;
-
     public void Useitem(PlayerMove playerMove)
     {
         UseItemServerRpc(NetworkManager.Singleton.LocalClientId);
@@ -17,22 +15,25 @@ public class PlayerItem : NetworkBehaviour
     [ServerRpc(RequireOwnership = true)]
     public void UseItemServerRpc(ulong clientId)
     {
-        NetworkObject playerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
-        PlayerMove playerController = playerObject.GetComponent<PlayerMove>();
-        _playerController = playerController;
+        var playerObject = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
+        var playerController = playerObject.GetComponent<PlayerMove>();
 
-        switch (_playerController.my_ItemKind.Value)
+        switch (playerController.my_ItemKind.Value)
         {
             case ItemKind.Gun:
-                _playerController.UseGun();
-                if (GameUI.Instance != null) GameUI.Instance.HideItem("Gun");
+                playerController.UseGun();
                 break;
 
             case ItemKind.Speed:
-                _playerController.CjangeSpeed();
-                if (GameUI.Instance != null) GameUI.Instance.HideItem("Speed"); // 사용 후 UI 비활성화
+                playerController.CjangeSpeed();
                 break;
         }
+
+        playerController.equip.Value = false;
+        playerController.my_ItemKind.Value = ItemKind.None;
+
+        var playerData = playerController.GetComponent<PlayerData>();
+        playerData.CurrentItem.Value = (int)ItemKind.None;
     }
 }
 

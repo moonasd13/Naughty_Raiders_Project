@@ -68,6 +68,8 @@ public class PlayerMove : NetworkBehaviour
     private float _defaultSprintSpeed;
     private float _speedIncrease = 1.3f;
 
+    private PlayerUI2 myUI;
+
     Item_Gun _item;
 
 
@@ -311,7 +313,31 @@ public class PlayerMove : NetworkBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+
+            my_ItemKind.OnValueChanged += OnItemKindChanged;
         }
+    }
+
+    /// 아이템 종류 변경 시
+    private void OnItemKindChanged(ItemKind previous, ItemKind current)
+    {
+        if (!IsOwner) return; // 본인만 UI 갱신
+
+        if (myUI == null) return;
+
+        if (current == ItemKind.None)
+        {
+            myUI.HideAll();
+        }
+        else
+        {
+            myUI.UpdateItem(current);
+        }
+    }
+
+    public void SetUI(PlayerUI2 ui)
+    {
+        myUI = ui;
     }
 
     /// <summary>
