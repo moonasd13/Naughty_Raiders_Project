@@ -2383,10 +2383,12 @@ MonoBehaviour:
   BottomClamp: -30
   CameraAngleOverride: 0
   LockCameraPosition: 0
-  rayHeightOffset: 0.5
+  rayOffset: {x: 0, y: 0.5, z: 0.2}
+  maxDistance: 10
   hitLayerMask:
     serializedVersion: 2
     m_Bits: 128
+  rayVisualPrefab: {fileID: 7312732182976132236, guid: b9d04a3bbfcbc794ba95ad641244c4dd, type: 3}
   AnimationBlend:
     m_InternalValue: 0
   NetworkMotionSpeed:

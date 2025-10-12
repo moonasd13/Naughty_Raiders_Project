@@ -75,12 +75,14 @@ public class PlayerMove : NetworkBehaviour
     /// <summary>
     /// 레이케스트용 변수
     /// </summary>
-    public float rayHeightOffset = 0.5f;
     [SerializeField]
-    private LayerMask hitLayerMask;
+    private Vector3 rayOffset = new Vector3(0f, 1f, 0f);
+    [SerializeField] private float maxDistance = 10f;
+    [SerializeField] private LayerMask hitLayerMask;
+    [SerializeField] private GameObject rayVisualPrefab;
 
-
-
+    // 커서 상태
+    private bool isCursorLocked = true;
 
     [Header("NetworkVariable")]
     public NetworkVariable<float> AnimationBlend = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -120,6 +122,11 @@ public class PlayerMove : NetworkBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToggleCursor();
+        }
+
         var controller = GetComponent<CharacterController>();
         if (controller != null && !controller.enabled)
         {
@@ -127,29 +134,29 @@ public class PlayerMove : NetworkBehaviour
         }
 
         if (!IsOwner) return;
-        
-
-        Ray();
 
         if (!_isStun.Value && !in_action.Value)
         {
-            // 입력 수집
-            float horizontal = 0f;
-            float vertical = 0f;
-            if (Input.GetKey(KeyCode.W)) vertical += 1f;
-            if (Input.GetKey(KeyCode.S)) vertical -= 1f;
-            if (Input.GetKey(KeyCode.D)) horizontal += 1f;
-            if (Input.GetKey(KeyCode.A)) horizontal -= 1f;
-
-            Vector2 moveInput = new Vector2(horizontal, vertical).normalized;
-            bool isSprinting = Input.GetKey(KeyCode.LeftShift);
-            Move(moveInput, isSprinting);
-            JumpAndGravity();
-
-            /// 아이템 사용
-            if (equip.Value && UnityEngine.Input.GetKeyDown(KeyCode.F))
+            if (!hide.Value)
             {
-                PlayerItem.Useitem(this);
+                // 입력 수집
+                float horizontal = 0f;
+                float vertical = 0f;
+                if (Input.GetKey(KeyCode.W)) vertical += 1f;
+                if (Input.GetKey(KeyCode.S)) vertical -= 1f;
+                if (Input.GetKey(KeyCode.D)) horizontal += 1f;
+                if (Input.GetKey(KeyCode.A)) horizontal -= 1f;
+
+                Vector2 moveInput = new Vector2(horizontal, vertical).normalized;
+                bool isSprinting = Input.GetKey(KeyCode.LeftShift);
+                Move(moveInput, isSprinting);
+                JumpAndGravity();
+
+                /// 아이템 사용
+                if (equip.Value && UnityEngine.Input.GetKeyDown(KeyCode.F))
+                {
+                    PlayerItem.Useitem(this);
+                }
             }
 
             /// 상호작용
@@ -322,11 +329,28 @@ public class PlayerMove : NetworkBehaviour
     {
         if (IsOwner)
         {
-            //Cursor.lockState = CursorLockMode.Locked;
-            //Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
 
             my_ItemKind.OnValueChanged += OnItemKindChanged;
             inHand.OnValueChanged += OnInHandChanged;
+        }
+    }
+
+    // 커서 토글
+    private void ToggleCursor()
+    {
+        isCursorLocked = !isCursorLocked;
+
+        if (isCursorLocked)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 
@@ -376,31 +400,32 @@ public class PlayerMove : NetworkBehaviour
             Coin coin = hit.GetComponent<Coin>();
             ItemObject item = hit.GetComponent<ItemObject>();
 
-
-            if (box != null)
-            {
-                box.SubmitInteractServerRpc();
-                break;
-            }
-
             if (cabinet != null)
             {
                 cabinet.Interact(this);
                 break;
             }
-            
-            if (coin != null)
-            {
-                coin.GetCoin(this);
-                break;
-            }
 
-            if (item != null)
+            if(!hide.Value)
             {
-                item.Getitem(this);
-                break;
-            }
+                if (box != null)
+                {
+                    box.SubmitInteractServerRpc();
+                    break;
+                }
 
+                if (coin != null)
+                {
+                    coin.GetCoin(this);
+                    break;
+                }
+
+                if (item != null)
+                {
+                    item.Getitem(this);
+                    break;
+                }
+            }
         }
     }
 
@@ -487,36 +512,74 @@ public class PlayerMove : NetworkBehaviour
             _item.ParentNetObjectRef.Value = new NetworkObjectReference(parentNetObj);
         }
         _item.equip.Value = true;
+
+        Ray();
     }
 
     private void Ray()
     {
-        Vector3 startPoint = transform.position + Vector3.up * rayHeightOffset;
+        Vector3 startPoint = transform.position
+                    + transform.right * rayOffset.x
+                    + transform.up * rayOffset.y
+                    + transform.forward * rayOffset.z;
         Vector3 direction = transform.forward;
 
-        float maxDistance = 10f;
-        RaycastHit hit;
-
-        // 1. Scene 뷰에 디버그용 선을 그립니다.
-        Debug.DrawRay(startPoint, direction * maxDistance, Color.red);
-
-        if (Physics.Raycast(startPoint, direction, out hit, maxDistance, hitLayerMask))
+        if (Physics.Raycast(startPoint, direction, out RaycastHit hit, maxDistance, hitLayerMask))
         {
             PlayerMove playerScript = hit.collider.GetComponent<PlayerMove>();
-
             if (playerScript != null)
             {
-                // 1. 타겟 오브젝트의 NetworkObject를 얻습니다.
-                NetworkObject targetNetObj = playerScript.gameObject. GetComponent<NetworkObject>();
-
+                NetworkObject targetNetObj = playerScript.GetComponent<NetworkObject>();
                 if (targetNetObj != null)
                 {
-                    // 2. 서버에게 스턴 요청 RPC를 보냅니다.
                     RequestStunServerRpc(new NetworkObjectReference(targetNetObj));
-                    Debug.Log("감지함");
                 }
             }
+
+            SpawnRayVisualServerRpc(startPoint, hit.point);
         }
+        else
+        {
+            Vector3 endPoint = startPoint + direction * maxDistance;
+            SpawnRayVisualServerRpc(startPoint, endPoint);
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SpawnRayVisualServerRpc(Vector3 start, Vector3 end)
+    {
+        if (rayVisualPrefab == null) return;
+
+        GameObject visual = Instantiate(rayVisualPrefab, start, Quaternion.identity);
+        NetworkObject netObj = visual.GetComponent<NetworkObject>();
+        netObj.Spawn();
+
+        // 클라이언트들에게 좌표 정보 전송
+        UpdateRayVisualClientRpc(netObj.NetworkObjectId, start, end);
+
+        StartCoroutine(DestroyAfterDelay(netObj, 0.5f));
+    }
+
+    [ClientRpc]
+    private void UpdateRayVisualClientRpc(ulong netObjId, Vector3 start, Vector3 end)
+    {
+        if (NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(netObjId, out NetworkObject obj))
+        {
+            LineRenderer lr = obj.GetComponent<LineRenderer>();
+            if (lr != null)
+            {
+                lr.positionCount = 2;
+                lr.SetPosition(0, start);
+                lr.SetPosition(1, end);
+            }
+        }
+    }
+
+    private IEnumerator DestroyAfterDelay(NetworkObject netObj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (netObj != null && netObj.IsSpawned)
+            netObj.Despawn(true);
     }
 
     // 슈팅 에니메이션 종료
@@ -568,7 +631,6 @@ public class PlayerMove : NetworkBehaviour
         // 서버에서 요청을 받아 대상 NetworkObject를 찾습니다.
         if (targetPlayerNetObjRef.TryGet(out NetworkObject targetNetObj))
         {
-            Debug.Log("RPC보냄");
             PlayerMove playerScript = targetNetObj.GetComponent<PlayerMove>();
             if (playerScript != null)
             {

@@ -31,6 +31,15 @@ public class GateController : MonoBehaviour
         }
 
         gatePart.position = endPos;
+        
+        // 렌더러 비활성화
+        Renderer renderer = gatePart.GetComponent<Renderer>();
+        if (renderer != null)
+            renderer.enabled = false;
+        // 콜라이더 비활성화
+        Collider col = gatePart.GetComponent<Collider>();
+        if (col != null)
+            col.enabled = false;
         GameManger.Instance.GameStateChange(GameState.secondTime);
     }
 }
