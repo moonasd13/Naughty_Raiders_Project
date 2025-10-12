@@ -127,6 +127,16 @@ public class PlayerMove : NetworkBehaviour
             ToggleCursor();
         }
 
+        if (hide.Value)
+        {
+            // 숨기 해제에 필요한 부분
+            if (IsOwner && UnityEngine.Input.GetKeyDown(KeyCode.E))
+            {
+                TryInteractWithNearbyBox();
+            }
+            return;
+        }
+
         var controller = GetComponent<CharacterController>();
         if (controller != null && !controller.enabled)
         {

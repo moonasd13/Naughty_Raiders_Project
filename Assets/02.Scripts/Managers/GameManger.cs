@@ -67,7 +67,7 @@ public class GameManger : NetworkBehaviour
                     is_playersPosChanged = true;
                 }
 
-                if (currentTime <= 590) //560
+                if (currentTime <= 560) //560
                 {
                     if(!is_GateOpen)
                     {

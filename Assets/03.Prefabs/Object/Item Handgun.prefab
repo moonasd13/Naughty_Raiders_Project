@@ -92,6 +92,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -2115702280481807893, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2115702280481807893, guid: 7d65416a0aa9b164c8b8ad5e8699ddc0, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.7071068
       objectReference: {fileID: 0}
@@ -261,5 +265,7 @@ MonoBehaviour:
   rotationSpeed: 45
   floatAmplitude: 0.25
   floatFrequency: 1
+  equip:
+    m_InternalValue: 0
   bullet: {fileID: 2531174675575707382, guid: d60f0a10edf759a4b9defaf65a644d84, type: 3}
   bulletPos: {fileID: 6077591829981684924}

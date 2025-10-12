@@ -57,7 +57,8 @@ public class ItemSpawner : NetworkBehaviour
         for (int i = 0; i < actualCoinCount; i++)
         {
             Transform spawnPoint = shuffledList[i];
-            GameObject coinObj = Instantiate(coin, spawnPoint.position, Quaternion.identity);
+            Vector3 spawnPos = spawnPoint.position + Vector3.up * 1f;
+            GameObject coinObj = Instantiate(coin, spawnPos, Quaternion.identity);
             var netObj = coinObj.GetComponent<NetworkObject>();
             netObj.Spawn(true);
             netObj.TrySetParent(parentNetworkObject);
