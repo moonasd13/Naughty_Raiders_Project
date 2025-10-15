@@ -137,7 +137,6 @@ public class GameManger : NetworkBehaviour
     }
     #endregion
 
-
     public void GameStateChange(GameState curState)
     {
         NowGameState.Value = curState;

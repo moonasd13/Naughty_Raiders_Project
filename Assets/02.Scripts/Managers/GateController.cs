@@ -1,8 +1,9 @@
-using UnityEngine;
-using System.Collections;
 using DefineEnum;
+using System.Collections;
+using Unity.Netcode;
+using UnityEngine;
 
-public class GateController : MonoBehaviour
+public class GateController : NetworkBehaviour
 {
     [SerializeField]
     [Header("초기구역")]
@@ -15,8 +16,8 @@ public class GateController : MonoBehaviour
         foreach (Transform child in GateWalls.transform)
         {
             StartCoroutine(MoveUp(child));
-        }
 
+        }
     }
 
     private IEnumerator MoveUp(Transform gatePart)
@@ -31,15 +32,29 @@ public class GateController : MonoBehaviour
         }
 
         gatePart.position = endPos;
-        
-        // 렌더러 비활성화
-        Renderer renderer = gatePart.GetComponent<Renderer>();
-        if (renderer != null)
-            renderer.enabled = false;
-        // 콜라이더 비활성화
-        Collider col = gatePart.GetComponent<Collider>();
-        if (col != null)
-            col.enabled = false;
+
+        if (IsServer)
+        {
+            DestroyGateServerRpc();
+            GameManger.Instance.GameStateChange(GameState.secondTime);
+        }
         GameManger.Instance.GameStateChange(GameState.secondTime);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void DestroyGateServerRpc()
+    {
+        foreach (Transform child in GateWalls.transform)
+        {
+            var netObj = child.GetComponent<NetworkObject>();
+            if (netObj != null && netObj.IsSpawned)
+            {
+                netObj.Despawn(true);
+            }
+            else
+            {
+                Destroy(child.gameObject);
+            }
+        }
     }
 }
