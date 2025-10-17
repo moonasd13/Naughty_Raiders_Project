@@ -22,6 +22,7 @@ public class GameManger : NetworkBehaviour
     private bool is_GameStarted = false;
     private bool is_playersPosChanged = false;
     private bool is_GateOpen = false;
+    private bool is_GameOverTriggered = false;
     private float currentTime;
 
     private NetworkVariable<GameState> NowGameState = new NetworkVariable<GameState>(
@@ -46,7 +47,15 @@ public class GameManger : NetworkBehaviour
 
     void Update()
     {
-        if (!IsServer) return;
+        if (!IsServer) 
+        {
+            return;
+        }
+
+        if (GameTimer.Instance == null)
+        {
+            return;
+        }
 
         currentTime = GameTimer.Instance.TimeLeft.Value;
 
@@ -78,18 +87,16 @@ public class GameManger : NetworkBehaviour
 
                 if (currentTime <= 0)
                 {
-                    if (GameOverUI.Instance != null)   // 싱글톤으로 만들었다면
+                    if (!is_GameOverTriggered)
                     {
-                        GameOverUI.Instance.ShowGameOver();
+                        is_GameOverTriggered = true;
+                        ShowGameOverClientRpc();
                     }
                 }
                 
                 break;
             case GameState.secondTime:
-                if (currentTime <= 0)
-                {
-                    GameOverUI.Instance.ShowGameOver();
-                }
+
             break;
         }
     }
@@ -140,5 +147,12 @@ public class GameManger : NetworkBehaviour
     public void GameStateChange(GameState curState)
     {
         NowGameState.Value = curState;
+    }
+
+    [ClientRpc]
+    private void ShowGameOverClientRpc()
+    {
+        Debug.Log($"[CLIENT RPC] Client {NetworkManager.Singleton.LocalClientId} -> GameOver 호출");
+        GameOverUI.Instance?.ShowLocalGameOver();
     }
 }

@@ -23,11 +23,10 @@ public class GameOverUI : MonoBehaviour
         goToSceneButton.onClick.AddListener(GoToScene);
     }
 
-    public void ShowGameOver()
+    public void ShowLocalGameOver()
     {
         if (gameOverPanel == null)
         {
-            Debug.LogError("GameOverPanel이 연결되지 않음!");
             return;
         }
         gameOverPanel.SetActive(true);

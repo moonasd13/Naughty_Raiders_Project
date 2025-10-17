@@ -52,26 +52,12 @@ public class GameUI : MonoBehaviour
     {
         if (playerUIPanel != null) playerUIPanel.SetActive(false);
 
-        upButton.onClick.AddListener(OnClickUp);
-        downButton.onClick.AddListener(OnClickDown);
         if (NetworkManager.Singleton != null)
         {
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         }
     }
 
-    //void Update()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Tab) && playerUIPanel != null)
-    //    {
-    //        playerUIPanel.SetActive(!playerUIPanel.activeSelf);
-    //    }
-
-    //    if (myPlayer == null && NetworkManager.Singleton.LocalClient.PlayerObject != null)
-    //    {
-    //        myPlayer = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerData>();
-    //    }
-    //}
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab) && playerUIPanel != null)
