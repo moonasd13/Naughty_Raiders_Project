@@ -63,24 +63,26 @@ public class PlayerData : NetworkBehaviour
         //스폰 직후 UI에 등록
         GameUI.Instance.RegisterPlayer(this);
 
-        //값이 바뀌면 UI 갱신 요청
+        //값이 바뀌면 UI 갱신
         Gold.OnValueChanged += OnGoldChanged;
         Nickname.OnValueChanged += OnNickChanged;
 
-        //서버라면 Firebase에서 데이터 로드
+        //서버라면 Firebase에서 데이터 불러오기
         if (IsOwner)
         {
             string myUid = Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser.UserId;
             SubmitFirebaseUidServerRpc(myUid);
         }
     }
+
     public override void OnNetworkDespawn()
     {
         Gold.OnValueChanged -= OnGoldChanged;
-        Nickname.OnValueChanged -= OnNickChanged;
+        Nickname.OnValueChanged -= OnNickChanged;        
+        CurrentItem.OnValueChanged -= OnItemChanged;
+
         //플레이어가 나가면 UI에서 제거
         GameUI.Instance.UnregisterPlayer(this);
-        CurrentItem.OnValueChanged -= OnItemChanged;
     }
 
     [ServerRpc]
@@ -88,7 +90,7 @@ public class PlayerData : NetworkBehaviour
     {
         FirebaseUid = uid;
 
-        // 서버에서 DB 데이터 불러오기
+        //서버에서 DB 데이터 불러오기
         DatabaseManager.Instance.LoadGoldFromDatabase(this, FirebaseUid);
         DatabaseManager.Instance.LoadNickFromDatabase(this, FirebaseUid);
     }
@@ -98,7 +100,7 @@ public class PlayerData : NetworkBehaviour
     {
         Gold.Value += amount;
 
-        // Firebase에도 반영
+        //Firebase에도 반영
         if (!string.IsNullOrEmpty(FirebaseUid))
         {
             DatabaseManager.Instance.SaveGoldToDatabase(FirebaseUid, Gold.Value);

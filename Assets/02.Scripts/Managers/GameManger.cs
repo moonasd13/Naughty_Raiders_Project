@@ -18,7 +18,6 @@ public class GameManger : NetworkBehaviour
     public GameObject[] Room_Chests;
     public Transform[] RoomsSPos;
 
-
     private bool is_GameStarted = false;
     private bool is_playersPosChanged = false;
     private bool is_GateOpen = false;
@@ -30,6 +29,7 @@ public class GameManger : NetworkBehaviour
      NetworkVariableReadPermission.Everyone,
      NetworkVariableWritePermission.Server
  );
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -39,10 +39,6 @@ public class GameManger : NetworkBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-    }
-
-    void Start()
-    {
     }
 
     void Update()
@@ -68,11 +64,12 @@ public class GameManger : NetworkBehaviour
                     is_GameStarted = true;
                 }
                 break;
+
             case GameState.firstTime:
                 if(!is_playersPosChanged)
                 {
                     TeleportPlayersServerRpc();
-                    GameTimer.Instance.RequestStartTimerServerRpc();    // 이게 실행 되면 타이머가 돌아감
+                    GameTimer.Instance.RequestStartTimerServerRpc();    //이게 실행 되면 타이머가 돌아감
                     is_playersPosChanged = true;
                 }
 
@@ -93,8 +90,8 @@ public class GameManger : NetworkBehaviour
                         ShowGameOverClientRpc();
                     }
                 }
-                
                 break;
+
             case GameState.secondTime:
 
             break;

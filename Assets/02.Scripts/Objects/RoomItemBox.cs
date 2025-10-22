@@ -40,10 +40,10 @@ public class RoomItemBox : NetworkBehaviour
     [ClientRpc]
     private void SendGoldToClientRpc(ulong clientId, int goldAmount)
     {
-        // 이 클라이언트가 대상인지 확인
+        //이 클라이언트가 대상인지 확인
         if (NetworkManager.LocalClientId != clientId) return;
 
-        // PlayerData 가져오기
+        //PlayerData 가져오기
         var localPlayerObj = NetworkManager.Singleton.LocalClient.PlayerObject;
         if (localPlayerObj == null)
         {
@@ -58,7 +58,7 @@ public class RoomItemBox : NetworkBehaviour
             return;
         }
 
-        // DatabaseManager 호출 (Firebase UID 필요)
+        //DatabaseManager 호출 (Firebase UID 필요)
         if (DatabaseManager.Instance != null)
         {
             string uid = Firebase.Auth.FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
@@ -76,5 +76,4 @@ public class RoomItemBox : NetworkBehaviour
             Debug.LogWarning("SendGoldToClientRpc: DatabaseManager.Instance가 null입니다.");
         }
     }
-
 }

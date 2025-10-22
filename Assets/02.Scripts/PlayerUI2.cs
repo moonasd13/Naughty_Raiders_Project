@@ -30,6 +30,7 @@ public class PlayerUI2 : MonoBehaviour
                 break;
         }
     }
+
     public void HideAll()
     {
         gunImage.SetActive(false);

@@ -39,7 +39,7 @@ public class Coin : NetworkBehaviour
             }
         }
 
-        // 内牢 昏力
+        //内牢 昏力
         var netObj = GetComponent<NetworkObject>();
         if (netObj != null) netObj.Despawn();
         else Destroy(gameObject);

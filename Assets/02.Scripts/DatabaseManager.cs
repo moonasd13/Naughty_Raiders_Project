@@ -16,7 +16,6 @@ public class DatabaseManager : MonoBehaviour
     string m_userId;
 
     [SerializeField] int m_maxGoldCount;
-    //[SerializeField] SliderTimer m_slidertimer;
 
     private void Awake()
     {
@@ -32,9 +31,6 @@ public class DatabaseManager : MonoBehaviour
     {
         m_userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
         m_databaseRef = FirebaseDatabase.DefaultInstance.RootReference;
-
-        //LoadGoldFromDatabase();
-        //LoadNickFromDatabase();
     }
 
     public void LoadGoldFromDatabase(PlayerData player, string firebaseUid)
@@ -59,8 +55,7 @@ public class DatabaseManager : MonoBehaviour
 
     public void LoadNickFromDatabase(PlayerData player, string firebaseUid)
     {
-        m_databaseRef.Child("users").Child(firebaseUid).Child("Nickname").GetValueAsync()
-        .ContinueWithOnMainThread(task =>
+        m_databaseRef.Child("users").Child(firebaseUid).Child("Nickname").GetValueAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
             {
@@ -75,12 +70,11 @@ public class DatabaseManager : MonoBehaviour
     {
         int newGoldCount = Mathf.Clamp(player.Gold.Value + amount, 0, m_maxGoldCount);
 
-        m_databaseRef.Child("users").Child(firebaseUid).Child("Gold").SetValueAsync(newGoldCount)
-        .ContinueWithOnMainThread(task =>
+        m_databaseRef.Child("users").Child(firebaseUid).Child("Gold").SetValueAsync(newGoldCount).ContinueWithOnMainThread(task =>
         {
             if (task.IsCompletedSuccessfully)
             {
-                player.SetGoldFromDatabaseServerRpc(newGoldCount); // 서버에서 갱신
+                player.SetGoldFromDatabaseServerRpc(newGoldCount); 
             }
         });
     }

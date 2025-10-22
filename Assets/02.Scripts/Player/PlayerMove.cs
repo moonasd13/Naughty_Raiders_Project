@@ -364,7 +364,7 @@ public class PlayerMove : NetworkBehaviour
         }
     }
 
-    /// 아이템 종류 변경 시
+    // 아이템 종류 변경 시
     private void OnItemKindChanged(ItemKind previous, ItemKind current)
     {
         if (!IsOwner) return; // 본인만 UI 갱신

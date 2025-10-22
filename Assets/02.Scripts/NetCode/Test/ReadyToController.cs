@@ -13,15 +13,14 @@ public class ReadyToController : NetworkBehaviour
 
     private void Awake()
     {
-        // UI를 미리 찾아둠
+        //UI를 미리 찾아둠
         var canvas = GameObject.Find("Canvas");
         if (canvas != null)
         {
             readyPanel = canvas.transform.Find("ReadyPanel")?.gameObject;
             readyTxt = canvas.transform.Find("ReadyPanel/ReadyText")?.GetComponent<Text>();
             warningTxt = canvas.transform.Find("ReadyPanel/WarningText")?.GetComponent<Text>();
-            
-            //if (readyPanel != null) readyPanel.SetActive(true);
+
             if (warningTxt != null) warningTxt.gameObject.SetActive(false);
         }
     }
@@ -32,13 +31,13 @@ public class ReadyToController : NetworkBehaviour
 
         if (IsServer)
         {
-            // 호스트는 기본적으로 ready 상태
+            //호스트는 기본적으로 ready 상태
             playerReady[hostId] = true; 
             Debug.Log($"Host({hostId}) Ready = true");
         }
 
 
-        // Local Owner만 자신의 ReadyPanel을 켜도록
+        //Local Owner만 자신의 ReadyPanel을 켜도록
         if (IsOwner && readyPanel != null) readyPanel.SetActive(true);
 
         if (IsOwner)
@@ -57,8 +56,9 @@ public class ReadyToController : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsOwner) return; // 클라이언트용: F5로 준비/해제
+        if (!IsOwner) return; 
 
+        //클라이언트용: F5로 준비/해제
         if (!IsServer && Input.GetKeyDown(KeyCode.F5))
         {
             localReady = !localReady;
@@ -66,7 +66,7 @@ public class ReadyToController : NetworkBehaviour
             ToggleReadyServerRpc(localReady);
         }
 
-        // 호스트용: F6으로 게임 시작 시도
+        //호스트용: F6으로 게임 시작 시도
         if (IsServer && Input.GetKeyDown(KeyCode.F6))
         {
             TryStartGame();
@@ -101,7 +101,7 @@ public class ReadyToController : NetworkBehaviour
     {
         ulong localId = NetworkManager.Singleton.LocalClientId;
 
-        // 자기 자신만 갱신
+        //자기 자신만 갱신
         if (targetId != localId) return;
 
         var canvas = GameObject.Find("Canvas");
